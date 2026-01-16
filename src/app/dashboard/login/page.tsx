@@ -1,15 +1,17 @@
 'use client'
 
 import { Suspense, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 function LoginForm() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const redirectTo = searchParams.get('redirect') || '/dashboard/experiences'
   const error = searchParams.get('error')
 
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(
     error ? { type: 'error', text: 'Authentication failed. Please try again.' } : null
@@ -23,21 +25,16 @@ function LoginForm() {
     try {
       const supabase = createClient()
       
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/api/auth/callback?redirect=${encodeURIComponent(redirectTo)}`,
-        },
+        password,
       })
 
       if (error) {
         setMessage({ type: 'error', text: error.message })
       } else {
-        setMessage({
-          type: 'success',
-          text: 'Check your email for the login link!',
-        })
-        setEmail('')
+        // Redirect to dashboard on successful login
+        router.push(redirectTo)
       }
     } catch {
       setMessage({ type: 'error', text: 'An unexpected error occurred' })
@@ -68,12 +65,27 @@ function LoginForm() {
           />
         </div>
 
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+
         <button
           type="submit"
-          disabled={loading || !email}
+          disabled={loading || !email || !password}
           className="w-full py-2 px-4 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {loading ? 'Sending...' : 'Send Magic Link'}
+          {loading ? 'Signing in...' : 'Sign In'}
         </button>
       </form>
 
@@ -99,6 +111,7 @@ function LoginFormFallback() {
         Sign in to your account
       </h2>
       <div className="space-y-4">
+        <div className="h-10 bg-gray-200 rounded animate-pulse" />
         <div className="h-10 bg-gray-200 rounded animate-pulse" />
         <div className="h-10 bg-gray-200 rounded animate-pulse" />
       </div>
