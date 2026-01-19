@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import Image from 'next/image'
+import { useState, useCallback, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Media } from '@/lib/supabase/types'
 
@@ -12,173 +13,262 @@ interface ImageGalleryProps {
 }
 
 export function ImageGallery({ images, fallbackImage, title }: ImageGalleryProps) {
-  const [activeIndex, setActiveIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   
-  // Combine media with fallback
-  const allImages = images.length > 0 
-    ? images 
+  // Combine media with fallback - ensure URLs are valid
+  const allImages = images && images.length > 0 
+    ? images
+        .map(img => img?.url)
+        .filter((url): url is string => Boolean(url) && typeof url === 'string' && url.length > 0)
     : fallbackImage 
-      ? [{ id: 'fallback', url: fallbackImage }] as any[]
+      ? [fallbackImage]
       : []
   
   if (allImages.length === 0) {
     return (
-      <div className="aspect-[16/9] bg-gray-100 rounded-xl flex items-center justify-center">
-        <svg className="w-16 h-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="aspect-[4/3] bg-muted rounded-card flex items-center justify-center">
+        <svg className="w-16 h-16 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
       </div>
     )
   }
   
-  const activeImage = allImages[activeIndex]
-  
+  const goToPrevious = useCallback(() => {
+    setCurrentIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1))
+  }, [allImages.length])
+
+  const goToNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1))
+  }, [allImages.length])
+
+  const handleThumbnailClick = (index: number) => {
+    setCurrentIndex(index)
+  }
+
+  const openLightbox = () => {
+    setLightboxOpen(true)
+  }
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    if (!lightboxOpen) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case 'Escape':
+          setLightboxOpen(false)
+          break
+        case 'ArrowLeft':
+          goToPrevious()
+          break
+        case 'ArrowRight':
+          goToNext()
+          break
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = ''
+    }
+  }, [lightboxOpen, goToPrevious, goToNext])
+
   return (
     <>
-      <div className="space-y-3">
-        {/* Main image */}
-        <div 
-          className="relative aspect-[16/9] rounded-xl overflow-hidden bg-gray-100 cursor-pointer group"
-          onClick={() => setLightboxOpen(true)}
+      {/* Desktop Gallery */}
+      <div className="hidden md:block">
+        <button
+          onClick={openLightbox}
+          className="w-full aspect-video rounded-card overflow-hidden cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
-          <Image
-            src={activeImage.url}
-            alt={title}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-            priority
-            sizes="(max-width: 768px) 100vw, 60vw"
-          />
-          
-          {/* Expand icon */}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 rounded-full p-3">
-              <svg className="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-              </svg>
-            </div>
-          </div>
-          
-          {/* Image counter */}
-          {allImages.length > 1 && (
-            <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs font-medium px-2 py-1 rounded-full">
-              {activeIndex + 1} / {allImages.length}
-            </div>
-          )}
-        </div>
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentIndex}
+              src={allImages[currentIndex]}
+              alt={`${title} - Image ${currentIndex + 1}`}
+              className="w-full h-full object-cover"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            />
+          </AnimatePresence>
+        </button>
         
-        {/* Thumbnails */}
         {allImages.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="flex gap-2 mt-3">
             {allImages.map((image, index) => (
               <button
-                key={image.id}
-                onClick={() => setActiveIndex(index)}
+                key={index}
+                onClick={() => handleThumbnailClick(index)}
                 className={cn(
-                  'relative flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden transition-all',
-                  index === activeIndex 
-                    ? 'ring-2 ring-primary ring-offset-2' 
+                  'h-20 aspect-square rounded-lg overflow-hidden transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                  index === currentIndex
+                    ? 'ring-2 ring-primary'
                     : 'opacity-70 hover:opacity-100'
                 )}
               >
-                <Image
-                  src={image.url}
-                  alt={`${title} ${index + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="80px"
+                <img
+                  src={image}
+                  alt={`${title} thumbnail ${index + 1}`}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               </button>
             ))}
           </div>
         )}
       </div>
-      
+
+      {/* Mobile Carousel */}
+      <div className="md:hidden relative">
+        <button
+          onClick={openLightbox}
+          className="w-full aspect-[4/3] overflow-hidden cursor-zoom-in focus:outline-none rounded-card"
+        >
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentIndex}
+              src={allImages[currentIndex]}
+              alt={`${title} - Image ${currentIndex + 1}`}
+              className="w-full h-full object-cover"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            />
+          </AnimatePresence>
+        </button>
+
+        {/* Navigation Arrows */}
+        {allImages.length > 1 && (
+          <>
+            <button
+              onClick={(e) => { e.stopPropagation(); goToPrevious(); }}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-background/80 backdrop-blur-sm shadow-sm hover:bg-background transition-colors"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="w-5 h-5 text-foreground" />
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); goToNext(); }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-background/80 backdrop-blur-sm shadow-sm hover:bg-background transition-colors"
+              aria-label="Next image"
+            >
+              <ChevronRight className="w-5 h-5 text-foreground" />
+            </button>
+
+            {/* Dot Indicators */}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+              {allImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={(e) => { e.stopPropagation(); setCurrentIndex(index); }}
+                  className={cn(
+                    'w-2 h-2 rounded-full transition-colors duration-150',
+                    index === currentIndex ? 'bg-primary' : 'bg-foreground/30'
+                  )}
+                  aria-label={`Go to image ${index + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
       {/* Lightbox */}
-      {lightboxOpen && (
-        <Lightbox
-          images={allImages}
-          initialIndex={activeIndex}
-          title={title}
-          onClose={() => setLightboxOpen(false)}
-        />
-      )}
+      <Lightbox
+        images={allImages}
+        currentIndex={currentIndex}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        onPrevious={goToPrevious}
+        onNext={goToNext}
+        title={title}
+      />
     </>
   )
 }
 
 interface LightboxProps {
-  images: { id: string; url: string }[]
-  initialIndex: number
-  title: string
+  images: string[]
+  currentIndex: number
+  isOpen: boolean
   onClose: () => void
+  onPrevious: () => void
+  onNext: () => void
+  title: string
 }
 
-function Lightbox({ images, initialIndex, title, onClose }: LightboxProps) {
-  const [index, setIndex] = useState(initialIndex)
-  
-  const goNext = () => setIndex((i) => (i + 1) % images.length)
-  const goPrev = () => setIndex((i) => (i - 1 + images.length) % images.length)
-  
+function Lightbox({ images, currentIndex, isOpen, onClose, onPrevious, onNext, title }: LightboxProps) {
   return (
-    <div 
-      className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
-      onClick={onClose}
-    >
-      {/* Close button */}
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 text-white/80 hover:text-white p-2"
-      >
-        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-      
-      {/* Navigation */}
-      {images.length > 1 && (
-        <>
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/90"
+          onClick={onClose}
+        >
+          {/* Close Button */}
           <button
-            onClick={(e) => { e.stopPropagation(); goPrev(); }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2"
+            onClick={onClose}
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-background/10 hover:bg-background/20 transition-colors z-10"
+            aria-label="Close lightbox"
           >
-            <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
+            <X className="w-6 h-6 text-background" />
           </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); goNext(); }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2"
-          >
-            <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </>
+
+          {/* Previous Button */}
+          {images.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onPrevious(); }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-background/10 hover:bg-background/20 transition-colors z-10"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="w-6 h-6 text-background" />
+            </button>
+          )}
+
+          {/* Next Button */}
+          {images.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onNext(); }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-background/10 hover:bg-background/20 transition-colors z-10"
+              aria-label="Next image"
+            >
+              <ChevronRight className="w-6 h-6 text-background" />
+            </button>
+          )}
+
+          {/* Image */}
+          <motion.img
+            key={currentIndex}
+            src={images[currentIndex]}
+            alt={`${title} - Image ${currentIndex + 1}`}
+            className="max-w-[90vw] max-h-[80vh] object-contain shadow-lightbox"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            onClick={(e) => e.stopPropagation()}
+          />
+
+          {/* Counter */}
+          {images.length > 1 && (
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-sm text-background/80">
+              {currentIndex + 1} / {images.length}
+            </div>
+          )}
+        </motion.div>
       )}
-      
-      {/* Image */}
-      <div 
-        className="relative max-w-[90vw] max-h-[85vh]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <Image
-          src={images[index].url}
-          alt={`${title} ${index + 1}`}
-          width={1200}
-          height={800}
-          className="object-contain max-h-[85vh]"
-          sizes="90vw"
-        />
-      </div>
-      
-      {/* Counter */}
-      {images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/80 text-sm">
-          {index + 1} / {images.length}
-        </div>
-      )}
-    </div>
+    </AnimatePresence>
   )
 }

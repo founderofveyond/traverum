@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import { getHotelBySlug, getExperienceForHotel } from '@/lib/hotels'
 import { getAvailableSessions } from '@/lib/sessions'
 import { getEmbedMode, formatDuration, cn } from '@/lib/utils'
 import { Header } from '@/components/Header'
 import { ImageGallery } from '@/components/ImageGallery'
 import { BookingPanel } from '@/components/BookingPanel'
+import { ExperienceDetailClient } from '@/components/ExperienceDetailClient'
 import type { Metadata } from 'next'
 
 interface ExperiencePageProps {
@@ -46,7 +46,8 @@ export default async function ExperiencePage({ params, searchParams }: Experienc
   
   return (
     <div className={cn(
-      embedMode === 'full' ? 'embed-full' : 'embed-section'
+      embedMode === 'full' ? 'embed-full' : 'embed-section',
+      'min-h-screen pb-20 md:pb-0'
     )}>
       {/* Header - only in full mode */}
       {embedMode === 'full' && (
@@ -54,115 +55,75 @@ export default async function ExperiencePage({ params, searchParams }: Experienc
           hotelName={hotel.display_name}
           logoUrl={hotel.logo_url}
           hotelSlug={hotelSlug}
+          showBack
+          backTo={`/${hotelSlug}`}
         />
       )}
       
-      <main className="max-w-6xl mx-auto px-4 py-6">
-        {/* Back link */}
-        <Link
-          href={`/${hotelSlug}${embedMode === 'section' ? '?embed=section' : ''}`}
-          className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 mb-4"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back to experiences
-        </Link>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* Left column - Content */}
-          <div className="lg:col-span-3 space-y-6">
-            {/* Image gallery */}
+      <main className="container px-4 py-4 md:py-6">
+        <div className="md:grid md:grid-cols-5 md:gap-6">
+          {/* Left Column - Content */}
+          <div className="md:col-span-3">
             <ImageGallery
               images={experience.media}
               fallbackImage={experience.image_url}
               title={experience.title}
             />
             
-            {/* Title and meta */}
-            <div>
-              <p className="text-sm text-gray-500 mb-1">
-                By {experience.supplier.name}
+            <div className="mt-5">
+              <h1 className="text-2xl font-semibold text-foreground">{experience.title}</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                {formatDuration(experience.duration_minutes)} · Up to {experience.max_participants} people
               </p>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-                {experience.title}
-              </h1>
-              
-              {/* Quick info */}
-              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                <span className="flex items-center gap-1.5">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  {formatDuration(experience.duration_minutes)}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                  {experience.min_participants}-{experience.max_participants} participants
-                </span>
-                {experience.meeting_point && (
-                  <span className="flex items-center gap-1.5">
-                    <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    {experience.meeting_point}
-                  </span>
-                )}
-              </div>
-            </div>
-            
-            {/* Description */}
-            <div className="prose prose-gray max-w-none">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">About this experience</h2>
-              <div className="text-gray-600 whitespace-pre-line">
+              <p className="text-sm text-foreground mt-3 leading-relaxed">
                 {experience.description}
-              </div>
+              </p>
             </div>
-            
-            {/* Meeting point details */}
-            {experience.meeting_point && (
-              <div className="bg-gray-50 rounded-xl p-5">
-                <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  Meeting Point
-                </h3>
-                <p className="text-gray-600">{experience.meeting_point}</p>
+
+            {/* Info Sections */}
+            <div className="mt-6 pt-6 border-t border-border space-y-4">
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">How it works</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Reserve now — free and non-binding. Pay after provider confirms.
+                </p>
               </div>
-            )}
-            
-            {/* Provider info */}
-            <div className="border-t border-gray-100 pt-6">
-              <h3 className="font-semibold text-gray-900 mb-3">Provided by</h3>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-primary font-semibold text-lg">
-                    {experience.supplier.name.charAt(0)}
-                  </span>
-                </div>
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">Cancellation</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Free cancellation up to 7 days before.
+                </p>
+              </div>
+              {experience.meeting_point && (
                 <div>
-                  <p className="font-medium text-gray-900">{experience.supplier.name}</p>
-                  <p className="text-sm text-gray-500">Local experience provider</p>
+                  <h3 className="text-sm font-semibold text-foreground">Meeting point</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {experience.meeting_point}
+                  </p>
                 </div>
-              </div>
+              )}
             </div>
           </div>
-          
-          {/* Right column - Booking panel */}
-          <div className="lg:col-span-2">
-            <BookingPanel
-              experience={experience}
-              sessions={sessions}
-              hotelSlug={hotelSlug}
-            />
+
+          {/* Right Column - Booking Panel (Desktop) */}
+          <div className="hidden md:block md:col-span-2">
+            <div className="sticky top-6">
+              <BookingPanel
+                experience={experience}
+                sessions={sessions}
+                hotelSlug={hotelSlug}
+              />
+            </div>
           </div>
         </div>
       </main>
+
+      {/* Mobile Booking Components */}
+      <ExperienceDetailClient
+        experience={experience}
+        sessions={sessions}
+        hotelSlug={hotelSlug}
+      />
       
       {/* Embed mode resize script */}
       {embedMode === 'section' && (

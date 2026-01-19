@@ -160,8 +160,8 @@ export async function getExperienceForHotel(
   
   const hotel = hotelData as any
 
-  // Get the experience via distribution
-  const { data: distributionData } = await supabase
+  // Get all distributions for this hotel and find the one with matching experience slug
+  const { data: allDistData } = await supabase
     .from('distributions')
     .select(`
       *,
@@ -178,91 +178,39 @@ export async function getExperienceForHotel(
     `)
     .eq('hotel_id', hotel.partner_id)
     .eq('is_active', true)
-    .single()
-
-  if (!distributionData) return null
   
-  const distribution = distributionData as any
+  if (!allDistData || allDistData.length === 0) return null
   
-  const exp = distribution.experience
+  const allDist = (allDistData || []) as any[]
+  const found = allDist.find(d => d.experience?.slug === experienceSlug)
   
-  // Check if this is the right experience by slug
-  if (exp.slug !== experienceSlug) {
-    // Need to find the right distribution
-    const { data: allDistData } = await supabase
-      .from('distributions')
-      .select(`
-        *,
-        experience:experiences!distributions_experience_fk (
-          *,
-          supplier:partners!experiences_partner_fk (
-            id,
-            name,
-            email,
-            stripe_account_id,
-            stripe_onboarding_complete
-          )
-        )
-      `)
-      .eq('hotel_id', hotel.partner_id)
-      .eq('is_active', true)
-    
-    const allDist = (allDistData || []) as any[]
-    const found = allDist.find(d => d.experience?.slug === experienceSlug)
-    if (!found) return null
-    
-    const foundExp = found.experience
-    
-    // Get media
-    const { data: mediaData } = await supabase
-      .from('media')
-      .select('*')
-      .eq('experience_id', foundExp.id)
-      .order('sort_order', { ascending: true })
-    
-    const media = (mediaData || []) as any[]
-    
-    return {
-      ...foundExp,
-      media,
-      coverImage: media[0]?.url || foundExp.image_url || null,
-      supplier: foundExp.supplier,
-      distribution: {
-        id: found.id,
-        hotel_id: found.hotel_id,
-        experience_id: found.experience_id,
-        commission_supplier: found.commission_supplier,
-        commission_hotel: found.commission_hotel,
-        commission_platform: found.commission_platform,
-        is_active: found.is_active,
-        created_at: found.created_at,
-      },
-    }
-  }
-
+  if (!found || !found.experience) return null
+  
+  const foundExp = found.experience
+  
   // Get media for this experience
   const { data: mediaData } = await supabase
     .from('media')
     .select('*')
-    .eq('experience_id', exp.id)
+    .eq('experience_id', foundExp.id)
     .order('sort_order', { ascending: true })
   
   const media = (mediaData || []) as any[]
-
+  
   return {
-    ...exp,
+    ...foundExp,
     media,
-    coverImage: media[0]?.url || exp.image_url || null,
-    supplier: exp.supplier,
+    coverImage: media[0]?.url || foundExp.image_url || null,
+    supplier: foundExp.supplier,
     distribution: {
-      id: distribution.id,
-      hotel_id: distribution.hotel_id,
-      experience_id: distribution.experience_id,
-      commission_supplier: distribution.commission_supplier,
-      commission_hotel: distribution.commission_hotel,
-      commission_platform: distribution.commission_platform,
-      is_active: distribution.is_active,
-      created_at: distribution.created_at,
+      id: found.id,
+      hotel_id: found.hotel_id,
+      experience_id: found.experience_id,
+      commission_supplier: found.commission_supplier,
+      commission_hotel: found.commission_hotel,
+      commission_platform: found.commission_platform,
+      is_active: found.is_active,
+      created_at: found.created_at,
     },
   }
 }

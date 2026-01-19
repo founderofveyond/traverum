@@ -2,29 +2,77 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
-  --color-primary-light: #dbeafe;
-  --font-sans: 'Inter', system-ui, sans-serif;
+@layer base {
+  :root {
+    /* Core Colors */
+    --background: 0 0% 100%;
+    --background-alt: 210 40% 98%;
+    --foreground: 217 33% 17%;
+    
+    /* Text Colors */
+    --text-primary: 217 33% 17%;
+    --text-muted: 215 16% 47%;
+    
+    /* Brand Colors - Will be overridden by hotel primary_color */
+    --primary: 217 91% 60%;
+    --primary-hover: 217 91% 55%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Status Colors */
+    --success: 160 84% 30%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 44%;
+    --warning-foreground: 0 0% 100%;
+    
+    /* UI Colors */
+    --card: 0 0% 100%;
+    --card-foreground: 217 33% 17%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 217 33% 17%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 217 33% 17%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 217 33% 17%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Border & Input */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 91% 60%;
+    
+    /* Radius */
+    --radius: 0.5rem;
+    --radius-card: 0.75rem;
+    --radius-button: 0.5rem;
+  }
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer utilities {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
 }
 
 /* Utility classes for embed mode */
@@ -33,18 +81,18 @@ body {
 }
 
 .embed-full {
-  background: #fafafa;
+  background: hsl(var(--background-alt));
   min-height: 100vh;
 }
 
 /* Button styles using CSS variables */
 .btn-primary {
-  @apply inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium text-white transition-colors;
-  background-color: var(--color-primary);
+  @apply inline-flex items-center justify-center rounded-button px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors;
+  background-color: hsl(var(--primary));
 }
 
 .btn-primary:hover {
-  background-color: var(--color-primary-hover);
+  background-color: hsl(var(--primary-hover));
 }
 
 .btn-primary:disabled {
@@ -54,26 +102,40 @@ body {
 
 /* Card styles */
 .card {
-  @apply bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-shadow;
+  @apply bg-card rounded-card shadow-card border border-border overflow-hidden transition-shadow;
 }
 
 .card:hover {
-  @apply shadow-md;
+  @apply shadow-card-hover;
 }
 
 /* Form input styles */
 .input {
-  @apply w-full rounded-lg border border-gray-300 px-3 py-2 text-sm transition-colors;
+  @apply w-full rounded-button border border-input px-3 py-2 text-sm transition-colors;
   @apply focus:outline-none focus:ring-2 focus:border-transparent;
-  --tw-ring-color: var(--color-primary);
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
 }
 
 .input:focus {
-  border-color: var(--color-primary);
+  border-color: hsl(var(--primary));
+  --tw-ring-color: hsl(var(--ring));
 }
 
 /* Price display */
 .price {
   @apply font-semibold;
-  color: var(--color-primary);
+  color: hsl(var(--primary));
+}
+
+/* Calendar table layout fix */
+.rdp-table {
+  table-layout: fixed !important;
+  width: 100% !important;
+}
+
+.rdp-head_cell,
+.rdp-cell {
+  width: 14.285714% !important;
+  text-align: center !important;
 }

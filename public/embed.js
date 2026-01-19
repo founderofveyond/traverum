@@ -3,17 +3,19 @@
  * 
  * Usage:
  * <div id="traverum-widget"></div>
- * <script src="https://widget.traverum.com/embed.js" 
+ * <script src="https://your-domain.com/embed.js" 
  *         data-hotel="hotel-rosa"
  *         data-mode="section"
  *         data-max-experiences="3">
  * </script>
+ * 
+ * The widget URL is automatically detected from the script src.
+ * You can also override it with data-widget-url attribute.
  */
 (function() {
   'use strict';
   
   // Configuration
-  var WIDGET_URL = 'https://widget.traverum.com';
   var CONTAINER_ID = 'traverum-widget';
   
   // Get the current script element
@@ -22,14 +24,37 @@
     return scripts[scripts.length - 1];
   })();
   
+  // Dynamically detect widget URL from script src
+  // Extract origin from script src (e.g., https://widget.traverum.com from https://widget.traverum.com/embed.js)
+  var scriptSrc = currentScript.src || currentScript.getAttribute('src') || '';
+  var WIDGET_URL = '';
+  
+  if (scriptSrc) {
+    try {
+      var url = new URL(scriptSrc);
+      WIDGET_URL = url.origin;
+    } catch (e) {
+      // Fallback: try to extract origin manually
+      var match = scriptSrc.match(/^(https?:\/\/[^\/]+)/);
+      WIDGET_URL = match ? match[1] : window.location.origin;
+    }
+  } else {
+    // Ultimate fallback: use current page origin
+    WIDGET_URL = window.location.origin;
+  }
+  
   // Read configuration from data attributes
   var config = {
     hotel: currentScript.getAttribute('data-hotel'),
     mode: currentScript.getAttribute('data-mode') || 'section',
     maxExperiences: currentScript.getAttribute('data-max-experiences') || '3',
     theme: currentScript.getAttribute('data-theme') || 'light',
-    containerId: currentScript.getAttribute('data-container') || CONTAINER_ID
+    containerId: currentScript.getAttribute('data-container') || CONTAINER_ID,
+    widgetUrl: currentScript.getAttribute('data-widget-url') || WIDGET_URL
   };
+  
+  // Use data-widget-url if provided, otherwise use detected URL
+  WIDGET_URL = config.widgetUrl;
   
   // Validate required config
   if (!config.hotel) {

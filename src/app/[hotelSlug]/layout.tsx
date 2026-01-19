@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { getHotelBySlug } from '@/lib/hotels'
-import { darkenColor, lightenColor } from '@/lib/utils'
+import { hexToHsl } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 interface HotelLayoutProps {
@@ -32,15 +32,18 @@ export default async function HotelLayout({ children, params }: HotelLayoutProps
     notFound()
   }
   
-  // Generate CSS variables for theming
+  // Generate CSS variables for theming (convert hex to HSL)
   const primaryColor = hotel.primary_color || '#2563eb'
-  const primaryHover = darkenColor(primaryColor, 15)
-  const primaryLight = lightenColor(primaryColor, 90)
+  const primaryHsl = hexToHsl(primaryColor)
+  
+  // Calculate hover color (slightly darker)
+  const [h, s, l] = primaryHsl.split(' ').map(v => parseFloat(v.replace('%', '')))
+  const hoverL = Math.max(0, l - 5) // Darken by 5%
   
   const cssVariables = {
-    '--color-primary': primaryColor,
-    '--color-primary-hover': primaryHover,
-    '--color-primary-light': primaryLight,
+    '--primary': primaryHsl,
+    '--primary-hover': `${h} ${s}% ${hoverL}%`,
+    '--ring': primaryHsl,
   } as React.CSSProperties
   
   return (

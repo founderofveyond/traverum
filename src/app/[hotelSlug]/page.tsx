@@ -4,6 +4,7 @@ import { getHotelWithExperiences } from '@/lib/hotels'
 import { getEmbedMode, cn } from '@/lib/utils'
 import { Header } from '@/components/Header'
 import { ExperienceCard } from '@/components/ExperienceCard'
+import { ExperienceListClient } from '@/components/ExperienceListClient'
 
 interface HotelPageProps {
   params: Promise<{ hotelSlug: string }>
@@ -44,39 +45,23 @@ export default async function HotelPage({ params, searchParams }: HotelPageProps
       )}
       
       <main className={cn(
-        'max-w-6xl mx-auto',
-        embedMode === 'full' ? 'px-4 py-8' : 'p-4'
+        'container',
+        embedMode === 'full' ? 'px-4 py-6' : 'p-4'
       )}>
-        {/* Title - only in full mode */}
-        {embedMode === 'full' && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Local Experiences
-            </h2>
-            <p className="text-gray-600">
-              Discover amazing activities curated by {hotel.display_name}
-            </p>
-          </div>
-        )}
+        {/* Title */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold text-foreground">Local Experiences</h1>
+          <p className="text-muted-foreground mt-1">Curated by our concierge team</p>
+        </div>
         
         {/* Experience grid */}
         {experiences.length > 0 ? (
           <>
-            <div className={cn(
-              'grid gap-6',
-              embedMode === 'full' 
-                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-                : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-            )}>
-              {displayExperiences.map((experience) => (
-                <ExperienceCard
-                  key={experience.id}
-                  experience={experience}
-                  hotelSlug={hotelSlug}
-                  embedMode={embedMode}
-                />
-              ))}
-            </div>
+            <ExperienceListClient 
+              experiences={displayExperiences}
+              hotelSlug={hotelSlug}
+              embedMode={embedMode}
+            />
             
             {/* View all link - section mode only */}
             {hasMoreExperiences && (
@@ -97,17 +82,7 @@ export default async function HotelPage({ params, searchParams }: HotelPageProps
           </>
         ) : (
           <div className="text-center py-12">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-              <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No experiences available
-            </h3>
-            <p className="text-gray-500">
-              Check back soon for new activities!
-            </p>
+            <p className="text-muted-foreground">No experiences available</p>
           </div>
         )}
       </main>

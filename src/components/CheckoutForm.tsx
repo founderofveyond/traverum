@@ -88,80 +88,92 @@ export function CheckoutForm({
   }
   
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       {error && (
-        <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg text-sm">
+        <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-button text-sm border border-destructive/20">
           {error}
         </div>
       )}
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="firstName" className="block text-sm font-medium text-foreground mb-2">
             First name *
           </label>
           <input
             {...register('firstName')}
             type="text"
             id="firstName"
-            className={cn('input', errors.firstName && 'border-red-300')}
+            className={cn(
+              'w-full px-4 py-2.5 border rounded-button bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors',
+              errors.firstName ? 'border-destructive' : 'border-border'
+            )}
             disabled={isSubmitting}
           />
           {errors.firstName && (
-            <p className="mt-1 text-xs text-red-600">{errors.firstName.message}</p>
+            <p className="mt-1.5 text-xs text-destructive">{errors.firstName.message}</p>
           )}
         </div>
         
         <div>
-          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="lastName" className="block text-sm font-medium text-foreground mb-2">
             Last name *
           </label>
           <input
             {...register('lastName')}
             type="text"
             id="lastName"
-            className={cn('input', errors.lastName && 'border-red-300')}
+            className={cn(
+              'w-full px-4 py-2.5 border rounded-button bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors',
+              errors.lastName ? 'border-destructive' : 'border-border'
+            )}
             disabled={isSubmitting}
           />
           {errors.lastName && (
-            <p className="mt-1 text-xs text-red-600">{errors.lastName.message}</p>
+            <p className="mt-1.5 text-xs text-destructive">{errors.lastName.message}</p>
           )}
         </div>
       </div>
       
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
           Email *
         </label>
         <input
           {...register('email')}
           type="email"
           id="email"
-          className={cn('input', errors.email && 'border-red-300')}
+          className={cn(
+            'w-full px-4 py-2.5 border rounded-button bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors',
+            errors.email ? 'border-destructive' : 'border-border'
+          )}
           disabled={isSubmitting}
           placeholder="you@example.com"
         />
         {errors.email && (
-          <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
+          <p className="mt-1.5 text-xs text-destructive">{errors.email.message}</p>
         )}
       </div>
       
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
           Phone number *
         </label>
         <input
           {...register('phone')}
           type="tel"
           id="phone"
-          className={cn('input', errors.phone && 'border-red-300')}
+          className={cn(
+            'w-full px-4 py-2.5 border rounded-button bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors',
+            errors.phone ? 'border-destructive' : 'border-border'
+          )}
           disabled={isSubmitting}
           placeholder="+358 40 123 4567"
         />
         {errors.phone && (
-          <p className="mt-1 text-xs text-red-600">{errors.phone.message}</p>
+          <p className="mt-1.5 text-xs text-destructive">{errors.phone.message}</p>
         )}
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-1.5 text-xs text-muted-foreground">
           The provider may contact you about your booking
         </p>
       </div>
@@ -170,14 +182,14 @@ export function CheckoutForm({
         type="submit"
         disabled={isSubmitting}
         className={cn(
-          'w-full btn-primary py-3 text-base',
+          'w-full py-3.5 bg-primary text-primary-foreground font-medium rounded-button hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
           isSubmitting && 'opacity-50 cursor-not-allowed'
         )}
       >
-        {isSubmitting ? 'Sending...' : 'Send Booking Request'}
+        {isSubmitting ? 'Sending...' : 'Send Request'}
       </button>
       
-      <p className="text-xs text-center text-gray-500">
+      <p className="text-xs text-center text-muted-foreground">
         By submitting, you agree to our terms of service and privacy policy.
         You won't be charged until the provider accepts and you complete payment.
       </p>

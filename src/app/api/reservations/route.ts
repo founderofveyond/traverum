@@ -3,6 +3,7 @@ import { createAdminClient } from '@/lib/supabase/server'
 import { generateAcceptToken, generateDeclineToken } from '@/lib/tokens'
 import { sendEmail, getAppUrl } from '@/lib/email/index'
 import { guestRequestReceived, supplierNewRequest } from '@/lib/email/templates'
+import { calculatePrice } from '@/lib/pricing'
 import { addHours } from 'date-fns'
 
 export async function POST(request: NextRequest) {
@@ -66,6 +67,14 @@ export async function POST(request: NextRequest) {
     
     const experience = experienceData as any
     
+    // Validate participants against experience limits
+    if (participants < experience.min_participants || participants > experience.max_participants) {
+      return NextResponse.json(
+        { error: `Participants must be between ${experience.min_participants} and ${experience.max_participants}` },
+        { status: 400 }
+      )
+    }
+    
     // If session-based, verify session availability
     let sessionData = null
     let date = requestDate
@@ -99,7 +108,19 @@ export async function POST(request: NextRequest) {
       time = session.start_time
     }
     
-    // Create reservation
+    // Recalculate price to ensure it's correct
+    const calculatedPrice = calculatePrice(experience, participants, sessionData)
+    const expectedTotal = calculatedPrice.totalPrice
+    
+    // Verify the total matches (allow small rounding differences)
+    if (Math.abs(totalCents - expectedTotal) > 1) {
+      return NextResponse.json(
+        { error: 'Price mismatch. Please refresh and try again.' },
+        { status: 400 }
+      )
+    }
+    
+    // Create reservation with recalculated price
     const responseDeadline = addHours(new Date(), 48)
     
     const { data: reservation, error: reservationError } = await (supabase
@@ -112,7 +133,7 @@ export async function POST(request: NextRequest) {
         guest_email: guestEmail,
         guest_phone: guestPhone || null,
         participants,
-        total_cents: totalCents,
+        total_cents: expectedTotal, // Use recalculated price
         is_request: isRequest,
         requested_date: isRequest ? requestDate : null,
         requested_time: isRequest ? requestTime : null,

@@ -94,11 +94,11 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
         />
       )}
       
-      <main className="max-w-4xl mx-auto px-4 py-6">
+      <main className="container px-4 py-6">
         {/* Back link */}
         <Link
           href={`/${hotelSlug}/${experience.slug}`}
-          className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 mb-6"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -106,15 +106,15 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
           Back to experience
         </Link>
         
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
+        <h1 className="text-2xl font-semibold text-foreground mb-6">
           Complete Your Booking
         </h1>
         
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Form */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="bg-card rounded-card border border-border p-6">
+              <h2 className="text-lg font-semibold text-card-foreground mb-5">
                 Guest Details
               </h2>
               

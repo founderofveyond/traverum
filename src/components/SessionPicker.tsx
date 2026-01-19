@@ -1,165 +1,218 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, isToday, isBefore, startOfDay } from 'date-fns'
-import { cn, formatTime } from '@/lib/utils'
+import { useMemo, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Info, ChevronDown, Check } from 'lucide-react'
+import { format } from 'date-fns'
+import { enGB } from 'date-fns/locale'
+import { Calendar } from '@/components/ui/calendar'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
+import { formatTime, cn } from '@/lib/utils'
 import type { ExperienceSession } from '@/lib/supabase/types'
 
 interface SessionPickerProps {
   sessions: ExperienceSession[]
-  selectedSession: ExperienceSession | null
-  onSelectSession: (session: ExperienceSession | null) => void
+  selectedSessionId: string | null
+  isCustomRequest: boolean
+  customDate: string
+  customTime: string
+  onSessionSelect: (sessionId: string | null, isCustom: boolean) => void
+  onCustomDateChange: (date: string) => void
+  onCustomTimeChange: (time: string) => void
   participants: number
 }
 
-export function SessionPicker({ sessions, selectedSession, onSelectSession, participants }: SessionPickerProps) {
-  const [currentMonth, setCurrentMonth] = useState(new Date())
+// All time options in a flat array for simpler grid layout
+const timeSlots = [
+  '08:00', '09:00', '10:00', '11:00',
+  '12:00', '13:00', '14:00', '15:00',
+  '16:00', '17:00', '18:00', '19:00',
+  '20:00', '21:00'
+]
+
+export function SessionPicker({
+  sessions,
+  selectedSessionId,
+  isCustomRequest,
+  customDate,
+  customTime,
+  onSessionSelect,
+  onCustomDateChange,
+  onCustomTimeChange,
+  participants,
+}: SessionPickerProps) {
+  const [slotsOpen, setSlotsOpen] = useState(false)
+  const [selectedCalendarDate, setSelectedCalendarDate] = useState<Date | undefined>(
+    customDate ? new Date(customDate) : undefined
+  )
   
-  // Get dates that have available sessions with enough spots
-  const availableDates = useMemo(() => {
-    const dates = new Set<string>()
-    sessions.forEach(session => {
-      if (session.spots_available >= participants) {
-        dates.add(session.session_date)
-      }
-    })
-    return dates
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  // Filter sessions based on participants
+  const availableSessions = useMemo(() => {
+    return sessions.filter(session => session.spots_available >= participants)
   }, [sessions, participants])
-  
-  // Get sessions for selected date
-  const selectedDate = selectedSession?.session_date
-  const sessionsForDate = useMemo(() => {
-    if (!selectedDate) return []
-    return sessions.filter(s => 
-      s.session_date === selectedDate && 
-      s.spots_available >= participants
-    )
-  }, [sessions, selectedDate, participants])
-  
-  // Calendar grid
-  const monthStart = startOfMonth(currentMonth)
-  const monthEnd = endOfMonth(currentMonth)
-  const days = eachDayOfInterval({ start: monthStart, end: monthEnd })
-  
-  // Pad start of month
-  const startPadding = monthStart.getDay() === 0 ? 6 : monthStart.getDay() - 1 // Monday = 0
-  
-  const handleDateClick = (date: Date) => {
-    const dateStr = format(date, 'yyyy-MM-dd')
-    if (availableDates.has(dateStr)) {
-      // Find first available session for this date
-      const firstSession = sessions.find(s => 
-        s.session_date === dateStr && 
-        s.spots_available >= participants
-      )
-      onSelectSession(firstSession || null)
+
+  const hasAvailableSessions = availableSessions.length > 0
+
+  // Transform sessions to match demo format (European date format: dd.mm.yyyy)
+  const transformedSessions = useMemo(() => {
+    return availableSessions.map(session => ({
+      id: session.id,
+      date: format(new Date(session.session_date), 'dd.MM.yyyy'),
+      time: formatTime(session.start_time),
+      spotsLeft: session.spots_available,
+      spotsTotal: session.spots_total,
+      priceOverrideCents: session.price_override_cents,
+      sessionDate: session.session_date,
+      startTime: session.start_time,
+    }))
+  }, [availableSessions])
+
+  // Handle calendar date selection for custom request
+  const handleCalendarDateSelect = (date: Date | undefined) => {
+    setSelectedCalendarDate(date)
+    if (date) {
+      onCustomDateChange(format(date, 'yyyy-MM-dd'))
+      // Clear session selection - we're in request mode
+      onSessionSelect(null, true)
     }
   }
-  
-  const handleTimeClick = (session: ExperienceSession) => {
-    onSelectSession(session)
+
+  // Handle time selection for custom request
+  const handleTimeSelect = (time: string) => {
+    onCustomTimeChange(time)
+    onSessionSelect(null, true)
   }
-  
+
+  // Handle selecting a confirmed session
+  const handleSessionSelect = (sessionId: string) => {
+    onSessionSelect(sessionId, false)
+    setSlotsOpen(false)
+  }
+
   return (
     <div className="space-y-4">
-      {/* Calendar */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        {/* Month navigation */}
-        <div className="flex items-center justify-between mb-4">
-          <button
-            onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <h3 className="font-medium text-gray-900">
-            {format(currentMonth, 'MMMM yyyy')}
-          </h3>
-          <button
-            onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
+      {/* Primary: Request Form */}
+      <div className="space-y-3">
+        <p className="text-sm font-medium text-foreground">
+          Pick your preferred date & time
+        </p>
         
-        {/* Weekday headers */}
-        <div className="grid grid-cols-7 gap-1 mb-2">
-          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-            <div key={day} className="text-center text-xs font-medium text-gray-500 py-1">
-              {day}
-            </div>
-          ))}
+        {/* Calendar - centered and compact */}
+        <div className="flex justify-center">
+          <Calendar
+            mode="single"
+            selected={selectedCalendarDate}
+            onSelect={handleCalendarDateSelect}
+            disabled={(date) => {
+              const dateOnly = new Date(date)
+              dateOnly.setHours(0, 0, 0, 0)
+              return dateOnly < today
+            }}
+            className="rounded-lg border border-border"
+          />
         </div>
-        
-        {/* Days grid */}
-        <div className="grid grid-cols-7 gap-1">
-          {/* Padding for start of month */}
-          {Array.from({ length: startPadding }).map((_, i) => (
-            <div key={`pad-${i}`} className="aspect-square" />
-          ))}
-          
-          {/* Days */}
-          {days.map(day => {
-            const dateStr = format(day, 'yyyy-MM-dd')
-            const isAvailable = availableDates.has(dateStr)
-            const isSelected = selectedDate === dateStr
-            const isPast = isBefore(day, startOfDay(new Date()))
-            const isCurrentDay = isToday(day)
-            
-            return (
-              <button
-                key={dateStr}
-                onClick={() => !isPast && handleDateClick(day)}
-                disabled={isPast || !isAvailable}
-                className={cn(
-                  'aspect-square flex items-center justify-center text-sm rounded-lg transition-all',
-                  isPast && 'text-gray-300 cursor-not-allowed',
-                  !isPast && !isAvailable && 'text-gray-400 cursor-not-allowed',
-                  !isPast && isAvailable && !isSelected && 'text-gray-900 hover:bg-gray-100 font-medium',
-                  isSelected && 'bg-primary text-white font-medium',
-                  isCurrentDay && !isSelected && 'ring-1 ring-primary',
-                )}
-              >
-                {format(day, 'd')}
-              </button>
-            )
-          })}
+
+        {/* Time Selection - Grid layout for mobile */}
+        <AnimatePresence>
+          {selectedCalendarDate && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="pt-3 border-t border-border">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Time for {format(selectedCalendarDate, 'dd.MM.yyyy')}
+                </p>
+                
+                {/* Grid of time slots - 4 columns on mobile, responsive */}
+                <div className="grid grid-cols-4 gap-2">
+                  {timeSlots.map((time) => (
+                    <button
+                      key={time}
+                      onClick={() => handleTimeSelect(time)}
+                      className={cn(
+                        'py-2.5 text-sm rounded-lg border transition-all font-medium',
+                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1',
+                        customTime === time && isCustomRequest
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : 'border-border bg-background hover:border-primary hover:bg-primary/5 text-foreground'
+                      )}
+                    >
+                      {time}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Info message */}
+        <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg">
+          <Info className="w-4 h-4 flex-shrink-0" />
+          <span>Provider will confirm your request within 48 hours</span>
         </div>
       </div>
-      
-      {/* Time slots */}
-      {selectedDate && sessionsForDate.length > 0 && (
-        <div className="space-y-2">
-          <h4 className="text-sm font-medium text-gray-700">Available times</h4>
-          <div className="grid grid-cols-3 gap-2">
-            {sessionsForDate.map(session => (
-              <button
-                key={session.id}
-                onClick={() => handleTimeClick(session)}
-                className={cn(
-                  'px-3 py-2 text-sm rounded-lg border transition-all',
-                  selectedSession?.id === session.id
-                    ? 'border-primary bg-primary/5 text-primary font-medium'
-                    : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                )}
-              >
-                <div className="font-medium">{formatTime(session.start_time)}</div>
-                <div className="text-xs text-gray-500">{session.spots_available} spots</div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-      
-      {selectedDate && sessionsForDate.length === 0 && (
-        <p className="text-sm text-gray-500 text-center py-4">
-          No available times for {participants} participants on this date.
-        </p>
+
+      {/* Secondary: Available Sessions (Collapsible) */}
+      {hasAvailableSessions && (
+        <Collapsible open={slotsOpen} onOpenChange={setSlotsOpen}>
+          <CollapsibleTrigger className="w-full flex items-center justify-between py-3 px-4 bg-success/10 text-success rounded-lg hover:bg-success/15 transition-colors">
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                {availableSessions.length} confirmed {availableSessions.length === 1 ? 'slot' : 'slots'} available
+              </span>
+            </div>
+            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${slotsOpen ? 'rotate-180' : ''}`} />
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mt-3 space-y-2"
+            >
+              <p className="text-xs text-muted-foreground mb-2">
+                Select a confirmed slot for instant booking
+              </p>
+              {transformedSessions.map((session) => (
+                <button
+                  key={session.id}
+                  onClick={() => handleSessionSelect(session.id)}
+                  className={`w-full flex items-center justify-between py-3 px-4 rounded-lg border-2 transition-all ${
+                    selectedSessionId === session.id && !isCustomRequest
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border hover:border-primary/50 bg-background'
+                  }`}
+                >
+                  <div className="flex flex-col items-start">
+                    <span className="text-sm font-medium text-foreground">
+                      {session.date} · {session.time}
+                    </span>
+                  </div>
+                  <span
+                    className={`text-xs ${
+                      session.spotsLeft <= 3 ? 'text-warning' : 'text-muted-foreground'
+                    }`}
+                  >
+                    {session.spotsLeft} spots left
+                  </span>
+                </button>
+              ))}
+            </motion.div>
+          </CollapsibleContent>
+        </Collapsible>
       )}
     </div>
   )

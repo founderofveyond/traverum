@@ -37,23 +37,30 @@ export function formatDuration(minutes: number): string {
 }
 
 /**
- * Format date for display (European standard)
+ * Format date for display (European standard: dd.mm.yyyy)
+ * Examples: "20.01.2025", "20.01" (short)
  */
-export function formatDate(date: Date | string): string {
+export function formatDate(date: Date | string, options?: { short?: boolean }): string {
   const d = typeof date === 'string' ? new Date(date) : date
-  return new Intl.DateTimeFormat('fi-FI', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  }).format(d)
+  
+  const day = d.getDate().toString().padStart(2, '0')
+  const month = (d.getMonth() + 1).toString().padStart(2, '0')
+  const year = d.getFullYear()
+  
+  if (options?.short) {
+    // Short format without year: "20.01"
+    return `${day}.${month}`
+  }
+  
+  // Full format: "20.01.2025"
+  return `${day}.${month}.${year}`
 }
 
 /**
- * Format time for display (24h format)
+ * Format time for display (24h European format)
+ * Handles "HH:MM:SS" or "HH:MM" input
  */
 export function formatTime(time: string): string {
-  // Time comes as "HH:MM:SS" or "HH:MM"
   const [hours, minutes] = time.split(':')
   return `${hours}:${minutes}`
 }
@@ -120,4 +127,45 @@ export function generateId(): string {
 export function truncate(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text
   return text.slice(0, maxLength - 3) + '...'
+}
+
+/**
+ * Convert hex color to HSL string (without hsl() wrapper)
+ * Returns format: "h s% l%" for use in CSS variables
+ */
+export function hexToHsl(hex: string): string {
+  // Remove # if present
+  const color = hex.replace('#', '')
+  
+  // Parse hex to RGB
+  const r = parseInt(color.substring(0, 2), 16) / 255
+  const g = parseInt(color.substring(2, 4), 16) / 255
+  const b = parseInt(color.substring(4, 6), 16) / 255
+  
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  let h: number, s: number, l: number
+  
+  l = (max + min) / 2
+  
+  if (max === min) {
+    h = s = 0 // achromatic
+  } else {
+    const d = max - min
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+    
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break
+      case g: h = ((b - r) / d + 2) / 6; break
+      case b: h = ((r - g) / d + 4) / 6; break
+      default: h = 0
+    }
+  }
+  
+  // Convert to percentages
+  h = Math.round(h * 360)
+  s = Math.round(s * 100)
+  l = Math.round(l * 100)
+  
+  return `${h} ${s}% ${l}%`
 }

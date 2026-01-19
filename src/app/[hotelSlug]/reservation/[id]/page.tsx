@@ -48,116 +48,121 @@ export default async function ReservationPage({ params, searchParams }: Reservat
         hotelSlug={hotelSlug}
       />
       
-      <main className="max-w-2xl mx-auto px-4 py-12">
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          {/* Status icon */}
-          <div className={cn(
-            'w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center',
-            reservation.reservation_status === 'pending' && 'bg-amber-100',
-            reservation.reservation_status === 'approved' && 'bg-green-100',
-            reservation.reservation_status === 'declined' && 'bg-red-100',
-            reservation.reservation_status === 'expired' && 'bg-gray-100',
-          )}>
-            {reservation.reservation_status === 'pending' && (
-              <svg className="w-8 h-8 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+      <main className="container px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-card rounded-card border border-border p-8 text-center">
+            {/* Status icon */}
+            <div className={cn(
+              'w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center',
+              reservation.reservation_status === 'pending' && 'bg-warning/10',
+              reservation.reservation_status === 'approved' && 'bg-success/10',
+              reservation.reservation_status === 'declined' && 'bg-destructive/10',
+              reservation.reservation_status === 'expired' && 'bg-muted',
+            )}>
+              {reservation.reservation_status === 'pending' && (
+                <svg className="w-10 h-10 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              )}
+              {reservation.reservation_status === 'approved' && (
+                <svg className="w-10 h-10 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+              {reservation.reservation_status === 'declined' && (
+                <svg className="w-10 h-10 text-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              )}
+              {reservation.reservation_status === 'expired' && (
+                <svg className="w-10 h-10 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              )}
+            </div>
+            
+            {/* Status title */}
+            <h1 className="text-3xl font-semibold text-card-foreground mb-3">
+              {reservation.reservation_status === 'pending' && 'Request Sent!'}
+              {reservation.reservation_status === 'approved' && 'Booking Approved!'}
+              {reservation.reservation_status === 'declined' && 'Booking Unavailable'}
+              {reservation.reservation_status === 'expired' && 'Request Expired'}
+            </h1>
+            
+            {/* Status message */}
+            <p className="text-muted-foreground mb-8 text-base">
+              {reservation.reservation_status === 'pending' && 
+                'Your booking request has been sent to the experience provider. They will respond within 48 hours.'}
+              {reservation.reservation_status === 'approved' && 
+                'Great news! Your booking has been approved. Check your email for the payment link.'}
+              {reservation.reservation_status === 'declined' && 
+                'Unfortunately, the provider was unable to accept your booking for this time.'}
+              {reservation.reservation_status === 'expired' && 
+                'This booking request has expired. The provider did not respond in time.'}
+            </p>
+            
+            {/* Booking details */}
+            <div className="bg-background-alt rounded-card p-6 text-left mb-8">
+              <h3 className="font-semibold text-foreground mb-4">Booking Details</h3>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Experience</span>
+                  <span className="font-medium text-foreground">{experience.title}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Date</span>
+                  <span className="font-medium text-foreground">
+                    {date ? formatDate(date) : 'Custom request'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Time</span>
+                  <span className="font-medium text-foreground">
+                    {time ? formatTime(time) : 'Custom request'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Participants</span>
+                  <span className="font-medium text-foreground">{reservation.participants}</span>
+                </div>
+                <div className="flex justify-between pt-3 border-t border-border">
+                  <span className="font-semibold text-foreground">Total</span>
+                  <span className="text-xl font-bold text-primary">
+                    {formatPrice(reservation.total_cents, experience.currency)}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Payment link for approved */}
+            {reservation.reservation_status === 'approved' && reservation.stripe_payment_link_url && (
+              <a
+                href={reservation.stripe_payment_link_url}
+                className="inline-flex items-center justify-center px-8 py-3.5 bg-primary text-primary-foreground font-medium rounded-button hover:bg-primary-hover transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              >
+                Complete Payment
+              </a>
             )}
-            {reservation.reservation_status === 'approved' && (
-              <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            )}
-            {reservation.reservation_status === 'declined' && (
-              <svg className="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            )}
-            {reservation.reservation_status === 'expired' && (
-              <svg className="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            )}
-          </div>
-          
-          {/* Status title */}
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            {reservation.reservation_status === 'pending' && 'Request Sent!'}
-            {reservation.reservation_status === 'approved' && 'Booking Approved!'}
-            {reservation.reservation_status === 'declined' && 'Booking Unavailable'}
-            {reservation.reservation_status === 'expired' && 'Request Expired'}
-          </h1>
-          
-          {/* Status message */}
-          <p className="text-gray-600 mb-8">
-            {reservation.reservation_status === 'pending' && 
-              'Your booking request has been sent to the experience provider. They will respond within 48 hours.'}
-            {reservation.reservation_status === 'approved' && 
-              'Great news! Your booking has been approved. Check your email for the payment link.'}
-            {reservation.reservation_status === 'declined' && 
-              'Unfortunately, the provider was unable to accept your booking for this time.'}
-            {reservation.reservation_status === 'expired' && 
-              'This booking request has expired. The provider did not respond in time.'}
-          </p>
-          
-          {/* Booking details */}
-          <div className="bg-gray-50 rounded-lg p-5 text-left mb-8">
-            <h3 className="font-semibold text-gray-900 mb-3">Booking Details</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Experience</span>
-                <span className="font-medium text-gray-900">{experience.title}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Date</span>
-                <span className="font-medium text-gray-900">
-                  {date ? formatDate(date) : 'Custom request'}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Time</span>
-                <span className="font-medium text-gray-900">
-                  {time ? formatTime(time) : 'Custom request'}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Participants</span>
-                <span className="font-medium text-gray-900">{reservation.participants}</span>
-              </div>
-              <div className="flex justify-between pt-2 border-t border-gray-200">
-                <span className="font-medium text-gray-900">Total</span>
-                <span className="font-bold text-primary">
-                  {formatPrice(reservation.total_cents, experience.currency)}
-                </span>
-              </div>
+            
+            {/* Back link */}
+            <div className="mt-6">
+              <Link
+                href={`/${hotelSlug}`}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to experiences
+              </Link>
             </div>
           </div>
           
-          {/* Payment link for approved */}
-          {reservation.reservation_status === 'approved' && reservation.stripe_payment_link_url && (
-            <a
-              href={reservation.stripe_payment_link_url}
-              className="btn-primary px-8 py-3 text-base inline-flex"
-            >
-              Complete Payment
-            </a>
-          )}
-          
-          {/* Back link */}
-          <div className="mt-6">
-            <Link
-              href={`/${hotelSlug}`}
-              className="text-sm text-gray-600 hover:text-gray-900"
-            >
-              ← Back to experiences
-            </Link>
-          </div>
+          {/* Email notice */}
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            We've sent a confirmation email to <strong className="text-foreground">{reservation.guest_email}</strong>
+          </p>
         </div>
-        
-        {/* Email notice */}
-        <p className="text-center text-sm text-gray-500 mt-6">
-          We've sent a confirmation email to <strong>{reservation.guest_email}</strong>
-        </p>
       </main>
     </div>
   )

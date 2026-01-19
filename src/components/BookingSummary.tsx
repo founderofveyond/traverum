@@ -27,16 +27,14 @@ export function BookingSummary({
   const time = session?.start_time || requestTime || ''
   
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-card rounded-card border border-border overflow-hidden sticky top-6">
       {/* Image */}
       {coverImage && (
         <div className="relative aspect-[16/9]">
-          <Image
+          <img
             src={coverImage}
             alt={experience.title}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 400px"
+            className="w-full h-full object-cover"
           />
         </div>
       )}
@@ -44,43 +42,43 @@ export function BookingSummary({
       <div className="p-5 space-y-4">
         {/* Title */}
         <div>
-          <h3 className="font-semibold text-gray-900">{experience.title}</h3>
-          <p className="text-sm text-gray-500">{formatDuration(experience.duration_minutes)}</p>
+          <h3 className="font-semibold text-card-foreground">{experience.title}</h3>
+          <p className="text-sm text-muted-foreground mt-0.5">{formatDuration(experience.duration_minutes)}</p>
         </div>
         
         {/* Details */}
-        <div className="space-y-2 text-sm">
+        <div className="space-y-2.5 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-600">Date</span>
-            <span className="font-medium text-gray-900">
-              {date ? formatDate(date) : 'Not selected'}
+            <span className="text-muted-foreground">Date</span>
+            <span className="font-medium text-card-foreground">
+              {date ? formatDate(date, { short: true }) : 'Not selected'}
             </span>
           </div>
           
           <div className="flex justify-between">
-            <span className="text-gray-600">Time</span>
-            <span className="font-medium text-gray-900">
+            <span className="text-muted-foreground">Time</span>
+            <span className="font-medium text-card-foreground">
               {time ? formatTime(time) : 'Not selected'}
             </span>
           </div>
           
           <div className="flex justify-between">
-            <span className="text-gray-600">Participants</span>
-            <span className="font-medium text-gray-900">{participants}</span>
+            <span className="text-muted-foreground">Participants</span>
+            <span className="font-medium text-card-foreground">{participants}</span>
           </div>
           
           {isRequest && (
             <div className="flex justify-between">
-              <span className="text-gray-600">Type</span>
-              <span className="font-medium text-amber-600">Custom Request</span>
+              <span className="text-muted-foreground">Type</span>
+              <span className="font-medium text-warning">Custom Request</span>
             </div>
           )}
         </div>
         
         {/* Total */}
-        <div className="pt-4 border-t border-gray-100">
+        <div className="pt-4 border-t border-border">
           <div className="flex justify-between items-center">
-            <span className="font-semibold text-gray-900">Total</span>
+            <span className="font-semibold text-card-foreground">Total</span>
             <span className="text-xl font-bold text-primary">
               {formatPrice(totalCents, experience.currency)}
             </span>
@@ -89,7 +87,7 @@ export function BookingSummary({
         
         {/* Notice */}
         {isRequest && (
-          <p className="text-xs text-gray-500 bg-amber-50 p-3 rounded-lg">
+          <p className="text-xs text-muted-foreground bg-warning/10 p-3 rounded-button border border-warning/20">
             This is a custom request. The provider will confirm if this time is available.
           </p>
         )}

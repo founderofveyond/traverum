@@ -1,37 +1,54 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 
 interface HeaderProps {
   hotelName: string
   logoUrl: string | null
   hotelSlug: string
+  showBack?: boolean
+  backTo?: string
 }
 
-export function Header({ hotelName, logoUrl, hotelSlug }: HeaderProps) {
+export function Header({ hotelName, logoUrl, hotelSlug, showBack = false, backTo }: HeaderProps) {
+  const router = useRouter()
+
+  const handleBack = () => {
+    if (backTo) {
+      router.push(backTo)
+    } else {
+      router.back()
+    }
+  }
+
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 py-4">
-        <Link href={`/${hotelSlug}`} className="flex items-center gap-3">
-          {logoUrl ? (
-            <Image
-              src={logoUrl}
-              alt={hotelName}
-              width={40}
-              height={40}
-              className="rounded-lg object-contain"
-            />
-          ) : (
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg">
-              {hotelName.charAt(0)}
-            </div>
-          )}
-          <div>
-            <h1 className="text-lg font-semibold text-gray-900">{hotelName}</h1>
-            <p className="text-xs text-gray-500">Local Experiences</p>
-          </div>
-        </Link>
+    <header className="sticky top-0 z-40 bg-background border-b border-border">
+      <div className="container flex items-center h-14 px-4">
+        {showBack ? (
+          <button
+            onClick={handleBack}
+            className="flex items-center justify-center w-10 h-10 -ml-2 rounded-button hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="w-5 h-5 text-foreground" />
+          </button>
+        ) : (
+          <Link href={`/${hotelSlug}`} className="flex items-center gap-3">
+            {logoUrl ? (
+              <Image
+                src={logoUrl}
+                alt={hotelName}
+                width={32}
+                height={32}
+                className="rounded-lg object-contain"
+              />
+            ) : null}
+            <h1 className="text-lg font-semibold text-foreground">{hotelName}</h1>
+          </Link>
+        )}
       </div>
     </header>
   )

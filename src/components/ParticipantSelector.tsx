@@ -34,9 +34,9 @@ export function ParticipantSelector({
   return (
     <div className="flex items-center justify-between">
       <div>
-        <span className="text-sm font-medium text-gray-900">Participants</span>
+        <span className="text-sm font-medium text-foreground">How many people?</span>
         {availableSpots && availableSpots < max && (
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground mt-0.5">
             {availableSpots} spots available
           </p>
         )}
@@ -50,8 +50,8 @@ export function ParticipantSelector({
           className={cn(
             'w-9 h-9 rounded-full border flex items-center justify-center transition-colors',
             value <= min
-              ? 'border-gray-200 text-gray-300 cursor-not-allowed'
-              : 'border-gray-300 text-gray-600 hover:border-gray-400 hover:bg-gray-50'
+              ? 'border-border text-muted-foreground cursor-not-allowed'
+              : 'border-border text-foreground hover:border-primary/50 hover:bg-muted'
           )}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -59,7 +59,7 @@ export function ParticipantSelector({
           </svg>
         </button>
         
-        <span className="w-8 text-center text-lg font-semibold text-gray-900">
+        <span className="w-8 text-center text-lg font-semibold text-foreground">
           {value}
         </span>
         
@@ -70,8 +70,8 @@ export function ParticipantSelector({
           className={cn(
             'w-9 h-9 rounded-full border flex items-center justify-center transition-colors',
             value >= effectiveMax
-              ? 'border-gray-200 text-gray-300 cursor-not-allowed'
-              : 'border-gray-300 text-gray-600 hover:border-gray-400 hover:bg-gray-50'
+              ? 'border-border text-muted-foreground cursor-not-allowed'
+              : 'border-border text-foreground hover:border-primary/50 hover:bg-muted'
           )}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
