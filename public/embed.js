@@ -77,10 +77,6 @@
   // Add cache-buster to prevent stale iframe content
   iframeSrc += '&_t=' + Date.now();
   
-  // Debug: Log the constructed URL (remove after debugging)
-  console.log('[Traverum Embed] Loading widget from:', iframeSrc);
-  console.log('[Traverum Embed] Detected WIDGET_URL:', WIDGET_URL);
-  
   // Create loading skeleton
   var skeleton = document.createElement('div');
   skeleton.className = 'traverum-skeleton';

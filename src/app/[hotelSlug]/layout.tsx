@@ -35,10 +35,6 @@ export default async function HotelLayout({ children, params }: HotelLayoutProps
   const { hotelSlug } = await params
   const hotel = await getHotelBySlug(hotelSlug)
   
-  // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/7a752e49-6c81-4e6d-ac0e-1f6231073f71',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'layout.tsx:HotelLayout:afterFetch',message:'Hotel fetched in layout',data:{hotelSlug,hasHotel:!!hotel,hotelId:hotel?.id,accentColor:hotel?.accent_color,textColor:hotel?.text_color,bgColor:hotel?.background_color,headingFont:hotel?.heading_font_family,bodyFont:hotel?.body_font_family,headingWeight:hotel?.heading_font_weight,cardRadius:hotel?.card_radius},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,D'})}).catch(()=>{});
-  // #endregion
-  
   if (!hotel) {
     notFound()
   }
@@ -118,40 +114,10 @@ export default async function HotelLayout({ children, params }: HotelLayoutProps
     '--font-size-lg': `${Math.round(basePx * 1.25)}px`,    // Large/price text (20px)
   } as React.CSSProperties
   
-  // #region agent log
-  // Debug: Log to Vercel server logs
-  console.log('[HotelLayout:PROD_DEBUG]', JSON.stringify({
-    hotelSlug,
-    hotelId: hotel.id,
-    accentColor: hotel.accent_color,
-    bgColor: hotel.background_color,
-    textColor: hotel.text_color,
-    headingFont: hotel.heading_font_family,
-    bodyFont: hotel.body_font_family,
-    timestamp: new Date().toISOString(),
-  }));
-  // #endregion
-  
-  // #region agent log
-  // Debug data attribute for browser inspection in production
-  const debugData = JSON.stringify({
-    id: hotel.id,
-    accent: hotel.accent_color,
-    bg: hotel.background_color,
-    text: hotel.text_color,
-    hFont: hotel.heading_font_family,
-    bFont: hotel.body_font_family,
-    hWeight: hotel.heading_font_weight,
-    ts: Date.now(),
-  });
-  // #endregion
-  
-  // #region agent log
   // Inject CSS variables - use body level so --font-fraunces from Next.js is accessible
   const cssVarsString = Object.entries(cssVariables)
     .map(([key, value]) => `${key}: ${value};`)
     .join('\n    ');
-  // #endregion
   
   return (
     <>
@@ -178,7 +144,6 @@ export default async function HotelLayout({ children, params }: HotelLayoutProps
           color: textColor,
           minHeight: '100vh',
         }}
-        data-hotel-debug={debugData}
       >
         {children}
       </div>
