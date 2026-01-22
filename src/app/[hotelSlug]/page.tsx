@@ -8,6 +8,8 @@ import { ExperienceListClient } from '@/components/ExperienceListClient'
 
 // Inherit dynamic from layout - hotel config changes take effect immediately
 export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+export const revalidate = 0
 
 interface HotelPageProps {
   params: Promise<{ hotelSlug: string }>
@@ -39,10 +41,45 @@ export default async function HotelPage({ params, searchParams }: HotelPageProps
   
   const hasMoreExperiences = embedMode === 'section' && experiences.length > 3
   
+  // #region agent log
+  // Visible debug banner for production debugging - REMOVE AFTER FIX VERIFIED
+  const BUILD_VERSION = 'FIX6-RED-BANNER'; // Update this to verify deployment
+  const debugInfo = {
+    v: BUILD_VERSION,
+    id: hotel.id,
+    accent: hotel.accent_color,
+    bg: hotel.background_color,
+    text: hotel.text_color,
+    hFont: hotel.heading_font_family,
+    ts: new Date().toISOString(),
+  };
+  // #endregion
+  
   return (
     <div className={cn(
       embedMode === 'full' ? 'embed-full' : 'embed-section'
     )}>
+      {/* #region agent log */}
+      {/* Debug banner - VERY VISIBLE - REMOVE AFTER FIX VERIFIED */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        background: '#ff0000',
+        color: '#ffffff',
+        padding: '12px 16px',
+        fontSize: '14px',
+        fontFamily: 'monospace',
+        fontWeight: 'bold',
+        zIndex: 99999,
+        textAlign: 'center',
+        borderBottom: '4px solid #000',
+      }}>
+        🔴 DEBUG {BUILD_VERSION} | bg={hotel.background_color || 'NULL'} | font={hotel.heading_font_family?.slice(0,25) || 'NULL'}
+      </div>
+      {/* #endregion */}
+      
       {/* Header - only in full mode */}
       {embedMode === 'full' && (
         <Header 

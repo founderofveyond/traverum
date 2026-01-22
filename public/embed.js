@@ -3,8 +3,8 @@
  * 
  * Usage:
  * <div id="traverum-widget"></div>
- * <script src="https://your-domain.com/embed.js" 
- *         data-hotel="hotel-rosa"
+ * <script src="https://book.traverum.com/embed.js" 
+ *         data-hotel="hotel-traverum"
  *         data-mode="section"
  *         data-max-experiences="3">
  * </script>
@@ -69,11 +69,17 @@
     return;
   }
   
-  // Build iframe URL
+  // Build iframe URL with cache-busting timestamp
   var iframeSrc = WIDGET_URL + '/' + config.hotel + '?embed=' + config.mode;
   if (config.maxExperiences) {
     iframeSrc += '&max=' + config.maxExperiences;
   }
+  // Add cache-buster to prevent stale iframe content
+  iframeSrc += '&_t=' + Date.now();
+  
+  // Debug: Log the constructed URL (remove after debugging)
+  console.log('[Traverum Embed] Loading widget from:', iframeSrc);
+  console.log('[Traverum Embed] Detected WIDGET_URL:', WIDGET_URL);
   
   // Create loading skeleton
   var skeleton = document.createElement('div');

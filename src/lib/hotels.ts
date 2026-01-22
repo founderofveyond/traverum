@@ -28,6 +28,10 @@ export interface ExperienceWithMedia extends Experience {
  * Fetch hotel config by slug
  */
 export async function getHotelBySlug(slug: string): Promise<HotelConfig | null> {
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/7a752e49-6c81-4e6d-ac0e-1f6231073f71',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'hotels.ts:getHotelBySlug:entry',message:'getHotelBySlug called',data:{slug,hasSupabaseUrl:!!process.env.NEXT_PUBLIC_SUPABASE_URL,hasServiceKey:!!process.env.SUPABASE_SERVICE_ROLE_KEY,supabaseUrlPrefix:process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0,30)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B,E'})}).catch(()=>{});
+  // #endregion
+  
   const supabase = createAdminClient()
   
   const { data, error } = await supabase
@@ -37,19 +41,10 @@ export async function getHotelBySlug(slug: string): Promise<HotelConfig | null> 
     .eq('is_active', true)
     .single()
   
-  // Debug: Log the raw response from Supabase
-  console.log('[getHotelBySlug] Supabase response:', {
-    slug,
-    error: error ? { message: error.message, code: error.code, details: error.details } : null,
-    data: data ? {
-      id: (data as HotelConfig).id,
-      slug: (data as HotelConfig).slug,
-      accent_color: (data as HotelConfig).accent_color,
-      card_radius: (data as HotelConfig).card_radius,
-      widget_title: (data as HotelConfig).widget_title,
-    } : null,
-    rawData: data,
-  })
+  // #region agent log
+  const hotelData = data as HotelConfig | null;
+  fetch('http://127.0.0.1:7242/ingest/7a752e49-6c81-4e6d-ac0e-1f6231073f71',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'hotels.ts:getHotelBySlug:response',message:'Supabase response received',data:{slug,hasError:!!error,errorMsg:error?.message,hasData:!!data,hotelId:hotelData?.id,accentColor:hotelData?.accent_color,textColor:hotelData?.text_color,bgColor:hotelData?.background_color,headingFont:hotelData?.heading_font_family,bodyFont:hotelData?.body_font_family,headingWeight:hotelData?.heading_font_weight,cardRadius:hotelData?.card_radius},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B,D,E'})}).catch(()=>{});
+  // #endregion
   
   if (error || !data) {
     return null
