@@ -53,7 +53,7 @@ export function createAdminClient() {
       },
       // Disable Next.js fetch cache to ensure fresh data from Supabase
       global: {
-        fetch: (url, options = {}) => {
+        fetch: (url: RequestInfo | URL, options: RequestInit = {}) => {
           return fetch(url, {
             ...options,
             cache: 'no-store',
