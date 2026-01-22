@@ -42,11 +42,11 @@ export async function getHotelBySlug(slug: string): Promise<HotelConfig | null> 
     slug,
     error: error ? { message: error.message, code: error.code, details: error.details } : null,
     data: data ? {
-      id: data.id,
-      slug: data.slug,
-      accent_color: data.accent_color,
-      card_radius: data.card_radius,
-      widget_title: data.widget_title,
+      id: (data as HotelConfig).id,
+      slug: (data as HotelConfig).slug,
+      accent_color: (data as HotelConfig).accent_color,
+      card_radius: (data as HotelConfig).card_radius,
+      widget_title: (data as HotelConfig).widget_title,
     } : null,
     rawData: data,
   })
