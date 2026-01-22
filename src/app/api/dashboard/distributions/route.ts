@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import type { Database } from '@/lib/supabase/types'
 
+export const dynamic = 'force-dynamic'
+
 type DistributionInsert = Database['public']['Tables']['distributions']['Insert']
 type DistributionUpdate = Database['public']['Tables']['distributions']['Update']
 

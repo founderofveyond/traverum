@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import type { Database } from '@/lib/supabase/types'
 
+export const dynamic = 'force-dynamic'
+
 type Experience = Database['public']['Tables']['experiences']['Row']
 type Distribution = Database['public']['Tables']['distributions']['Row']
 
