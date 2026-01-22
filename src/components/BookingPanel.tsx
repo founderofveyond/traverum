@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Calendar, ChevronDown, Users } from 'lucide-react'
-import { formatPrice, formatDuration } from '@/lib/utils'
+import { Calendar, ChevronDown } from 'lucide-react'
+import { formatPrice } from '@/lib/utils'
 import { calculatePrice, getDisplayPrice } from '@/lib/pricing'
 import { DatePickerDrawer } from './DatePickerDrawer'
 import { ParticipantSelector } from './ParticipantSelector'
@@ -105,6 +105,7 @@ export function BookingPanel({ experience, sessions, hotelSlug }: BookingPanelPr
 
         {/* Date Selector Button */}
         <button
+          type="button"
           onClick={() => setDateDrawerOpen(true)}
           className="w-full flex items-center justify-between px-4 py-3 border border-border rounded-button bg-background hover:border-accent/50 transition-colors text-left"
         >
@@ -148,6 +149,7 @@ export function BookingPanel({ experience, sessions, hotelSlug }: BookingPanelPr
           </div>
           
           <button
+            type="button"
             onClick={handleContinue}
             disabled={!hasDateSelection}
             className="w-full py-3.5 bg-accent text-accent-foreground font-medium rounded-button hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"

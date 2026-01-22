@@ -16,63 +16,52 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
       weekStartsOn={1}
       className={cn('p-3 pointer-events-auto select-none', className)}
       classNames={{
-        months: 'flex flex-col',
+        // v9 class names
+        months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
         month: 'space-y-4',
-        caption: 'flex justify-center pt-1 relative items-center',
-        caption_label: 'text-sm font-semibold text-foreground',
+        month_caption: 'flex justify-center pt-1 relative items-center',
+        caption_label: 'text-sm font-medium text-foreground',
         nav: 'space-x-1 flex items-center',
-        nav_button: cn(
-          'h-7 w-7 bg-transparent p-0 inline-flex items-center justify-center rounded-md border border-input',
-          'text-muted-foreground hover:text-foreground hover:bg-accent transition-colors',
+        button_previous: cn(
+          'absolute left-1 h-7 w-7 bg-transparent p-0 inline-flex items-center justify-center',
+          'border border-border rounded-md text-muted-foreground',
+          'hover:bg-muted hover:text-foreground transition-colors',
           'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent'
         ),
-        nav_button_previous: 'absolute left-1',
-        nav_button_next: 'absolute right-1',
-        table: 'w-full border-collapse rdp-table',
-        head_row: '',
-        head_cell: cn(
-          'text-muted-foreground h-9 font-medium text-xs text-center rdp-head_cell'
+        button_next: cn(
+          'absolute right-1 h-7 w-7 bg-transparent p-0 inline-flex items-center justify-center',
+          'border border-border rounded-md text-muted-foreground',
+          'hover:bg-muted hover:text-foreground transition-colors',
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent'
         ),
-        row: 'mt-1',
-        cell: cn(
-          'relative p-0 text-center text-sm h-10 rdp-cell',
-          'focus-within:relative focus-within:z-20',
-          '[&:has([aria-selected].day-range-end)]:rounded-r-md',
-          '[&:has([aria-selected].day-outside)]:bg-accent/50',
-          '[&:has([aria-selected])]:bg-accent',
-          'first:[&:has([aria-selected])]:rounded-l-md',
-          'last:[&:has([aria-selected])]:rounded-r-md'
-        ),
-        day: cn(
-          'h-10 w-10 p-0 font-normal inline-flex items-center justify-center rounded-md transition-colors mx-auto',
-          'hover:bg-accent/10 hover:text-accent cursor-pointer',
+        // Grid structure
+        month_grid: 'w-full border-collapse space-y-1',
+        weekdays: 'flex',
+        weekday: 'text-muted-foreground rounded-md w-9 font-normal text-[0.8rem] text-center',
+        week: 'flex w-full mt-2',
+        day: 'h-9 w-9 text-center text-sm p-0 relative focus-within:relative focus-within:z-20',
+        day_button: cn(
+          'h-9 w-9 p-0 font-normal inline-flex items-center justify-center rounded-md',
+          'hover:bg-muted text-foreground transition-colors',
           'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent',
           'aria-selected:opacity-100'
         ),
-        day_range_end: 'day-range-end',
-        day_selected: cn(
-          'bg-accent text-accent-foreground font-medium',
-          'hover:bg-accent hover:text-accent-foreground',
-          'focus:bg-accent focus:text-accent-foreground'
-        ),
-        day_today: 'bg-accent text-accent-foreground font-semibold',
-        day_outside: 'day-outside text-muted-foreground/40 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',
-        day_disabled: 'text-muted-foreground/30 cursor-not-allowed hover:bg-transparent hover:text-muted-foreground/30',
-        day_range_middle: 'aria-selected:bg-accent aria-selected:text-accent-foreground',
-        day_hidden: 'invisible',
+        // States
+        selected: 'bg-accent text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+        today: 'bg-muted text-foreground font-semibold',
+        outside: 'text-muted-foreground/40 aria-selected:bg-accent/50 aria-selected:text-muted-foreground/40',
+        disabled: 'text-muted-foreground/30 cursor-not-allowed',
+        range_middle: 'aria-selected:bg-accent aria-selected:text-accent-foreground',
+        hidden: 'invisible',
         ...classNames,
       }}
       components={{
-        PreviousMonthButton: ({ ...props }) => (
-          <button {...props} type="button">
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-        ),
-        NextMonthButton: ({ ...props }) => (
-          <button {...props} type="button">
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        ),
+        Chevron: ({ orientation }) => {
+          if (orientation === 'left') {
+            return <ChevronLeft className="h-4 w-4" />
+          }
+          return <ChevronRight className="h-4 w-4" />
+        },
       }}
       {...props}
     />

@@ -169,16 +169,48 @@
   color: hsl(var(--link-color));
 }
 
-/* Calendar table layout fix */
-.rdp-table {
-  table-layout: fixed !important;
-  width: 100% !important;
+/* Calendar layout fix for react-day-picker v9 */
+.rdp {
+  --rdp-cell-size: 36px;
 }
 
-.rdp-head_cell,
-.rdp-cell {
-  width: 14.285714% !important;
-  text-align: center !important;
+.rdp-month_grid {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.rdp-weekdays {
+  display: flex;
+  width: 100%;
+}
+
+.rdp-weekday {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.rdp-week {
+  display: flex;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.rdp-day {
+  width: 36px;
+  height: 36px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rdp-day_button {
+  width: 36px;
+  height: 36px;
 }
 
 /* List styles for rich text descriptions */

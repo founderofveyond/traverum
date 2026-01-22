@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
+import { X } from 'lucide-react'
 import { SessionPicker } from './SessionPicker'
 import { ParticipantSelector } from './ParticipantSelector'
 import { formatPrice } from '@/lib/utils'
@@ -91,7 +92,7 @@ export function BottomSheet({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-foreground/50 z-50"
+            className="fixed inset-0 bg-black/50 z-50"
             onClick={onClose}
           />
 
@@ -101,36 +102,44 @@ export function BottomSheet({
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-2xl max-h-[85vh] overflow-auto safe-area-bottom font-body"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-2xl max-h-[90vh] overflow-hidden flex flex-col safe-area-bottom font-body"
           >
-            {/* Drag Handle */}
-            <div className="sticky top-0 bg-background pt-3 pb-4 flex justify-center">
-              <div className="w-10 h-1 bg-border rounded-full" />
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 bg-muted-foreground/30 rounded-full" />
             </div>
 
-            <div className="px-4 pb-6">
-              <div className="flex items-baseline gap-1.5 mb-5">
-                <span className="text-2xl font-bold text-foreground">{formatPrice(priceCalc.totalPrice, experience.currency)}</span>
+            {/* Header with close button */}
+            <div className="flex items-center justify-between px-4 pb-3 border-b border-border">
+              <div>
+                <h3 className="font-medium text-foreground">Select Date & Time</h3>
               </div>
+              <button
+                type="button"
+                onClick={onClose}
+                className="p-2 -mr-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-              <div className="mb-5">
-                <label className="block font-medium text-foreground mb-3">
-                  When would you like to go?
-                </label>
-                <SessionPicker
-                  sessions={sessions}
-                  selectedSessionId={selectedSessionId}
-                  isCustomRequest={isCustomRequest}
-                  customDate={customDate}
-                  customTime={customTime}
-                  onSessionSelect={onSessionSelect}
-                  onCustomDateChange={onCustomDateChange}
-                  onCustomTimeChange={onCustomTimeChange}
-                  participants={participants}
-                />
-              </div>
+            {/* Scrollable content */}
+            <div className="flex-1 overflow-y-auto px-4 py-4">
+              <SessionPicker
+                sessions={sessions}
+                selectedSessionId={selectedSessionId}
+                isCustomRequest={isCustomRequest}
+                customDate={customDate}
+                customTime={customTime}
+                onSessionSelect={onSessionSelect}
+                onCustomDateChange={onCustomDateChange}
+                onCustomTimeChange={onCustomTimeChange}
+                participants={participants}
+              />
 
-              <div className="mb-5">
+              {/* Participants */}
+              <div className="mt-5 pt-4 border-t border-border">
                 <ParticipantSelector
                   value={participants}
                   onChange={onParticipantsChange}
@@ -139,14 +148,19 @@ export function BottomSheet({
                   availableSpots={selectedSession?.spots_available}
                 />
               </div>
+            </div>
 
-              <div className="text-right mb-5">
-                <span className="text-xl font-bold text-accent">
-                  Total: {formatPrice(priceCalc.totalPrice, experience.currency)}
+            {/* Footer */}
+            <div className="p-4 border-t border-border bg-background">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-muted-foreground">Total</span>
+                <span className="text-xl font-bold text-foreground">
+                  {formatPrice(priceCalc.totalPrice, experience.currency)}
                 </span>
               </div>
 
               <button
+                type="button"
                 onClick={handleContinue}
                 disabled={!canContinue}
                 className="w-full py-3.5 bg-accent text-accent-foreground font-medium rounded-button hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"

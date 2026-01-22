@@ -1,5 +1,7 @@
 'use client'
 
+import { useState, useMemo, useRef, useEffect } from 'react'
+import { Users, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface ParticipantSelectorProps {
@@ -17,22 +19,45 @@ export function ParticipantSelector({
   max,
   availableSpots 
 }: ParticipantSelectorProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
   const effectiveMax = availableSpots ? Math.min(max, availableSpots) : max
   
-  const decrease = () => {
-    if (value > min) {
-      onChange(value - 1)
+  // Generate array of valid participant counts
+  const participantOptions = useMemo(() => {
+    const options: number[] = []
+    for (let i = min; i <= effectiveMax; i++) {
+      options.push(i)
     }
+    return options
+  }, [min, effectiveMax])
+  
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen])
+  
+  const handleSelect = (num: number) => {
+    onChange(num)
+    setIsOpen(false)
   }
   
-  const increase = () => {
-    if (value < effectiveMax) {
-      onChange(value + 1)
-    }
-  }
+  const displayText = `${value} ${value === 1 ? 'person' : 'people'}`
   
   return (
-    <div className="flex items-center justify-between font-body">
+    <div className="relative font-body" ref={dropdownRef}>
       <div>
         <span className="text-sm font-medium text-foreground">How many people?</span>
         {availableSpots && availableSpots < max && (
@@ -42,43 +67,43 @@ export function ParticipantSelector({
         )}
       </div>
       
-      <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={decrease}
-          disabled={value <= min}
-          className={cn(
-            'w-9 h-9 rounded-full border flex items-center justify-center transition-colors',
-            value <= min
-              ? 'border-border text-muted-foreground cursor-not-allowed'
-              : 'border-border text-foreground hover:border-accent/50 hover:bg-muted'
-          )}
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-          </svg>
-        </button>
-        
-        <span className="w-8 text-center text-lg font-semibold text-foreground">
-          {value}
-        </span>
-        
-        <button
-          type="button"
-          onClick={increase}
-          disabled={value >= effectiveMax}
-          className={cn(
-            'w-9 h-9 rounded-full border flex items-center justify-center transition-colors',
-            value >= effectiveMax
-              ? 'border-border text-muted-foreground cursor-not-allowed'
-              : 'border-border text-foreground hover:border-accent/50 hover:bg-muted'
-          )}
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-        </button>
-      </div>
+      {/* Dropdown button - styled like date picker */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between px-4 py-3 border border-border rounded-button bg-background hover:border-accent/50 transition-colors text-left mt-2"
+      >
+        <div className="flex items-center gap-3">
+          <Users className="w-5 h-5 text-muted-foreground" />
+          <span className="text-foreground font-medium">
+            {displayText}
+          </span>
+        </div>
+        <ChevronDown className={cn('w-5 h-5 text-muted-foreground transition-transform', isOpen && 'rotate-180')} />
+      </button>
+      
+      {/* Dropdown menu */}
+      {isOpen && (
+        <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-button shadow-lg overflow-hidden">
+          <div className="max-h-60 overflow-y-auto">
+            {participantOptions.map((num) => (
+              <button
+                key={num}
+                type="button"
+                onClick={() => handleSelect(num)}
+                className={cn(
+                  'w-full px-4 py-2.5 text-left text-sm transition-colors',
+                  value === num
+                    ? 'bg-accent/10 text-accent font-medium'
+                    : 'text-foreground hover:bg-muted'
+                )}
+              >
+                {num} {num === 1 ? 'person' : 'people'}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

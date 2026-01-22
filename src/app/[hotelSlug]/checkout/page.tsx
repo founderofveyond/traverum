@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getHotelBySlug } from '@/lib/hotels'
 import { createAdminClient } from '@/lib/supabase/server'
 import { getEmbedMode, cn } from '@/lib/utils'
+import { isDemoHotel } from '@/lib/demo'
 import { Header } from '@/components/Header'
 import { CheckoutForm } from '@/components/CheckoutForm'
 import { BookingSummary } from '@/components/BookingSummary'
@@ -84,6 +85,11 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
   const participants = parseInt(participantsStr)
   const totalCents = parseInt(totalStr)
   const isRequest = search.isRequest === 'true'
+  const isDemo = isDemoHotel(hotelSlug)
+  
+  // Get session date/time for demo display
+  const sessionDate = session?.session_date
+  const sessionTime = session?.start_time
   
   return (
     <div className={cn(
@@ -124,12 +130,17 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
               <CheckoutForm
                 hotelSlug={hotelSlug}
                 experienceId={experience.id}
+                experienceTitle={experience.title}
+                currency={experience.currency}
                 sessionId={search.sessionId}
                 participants={participants}
                 totalCents={totalCents}
                 isRequest={isRequest}
                 requestDate={search.requestDate}
                 requestTime={search.requestTime}
+                sessionDate={sessionDate}
+                sessionTime={sessionTime}
+                isDemo={isDemo}
               />
             </div>
           </div>

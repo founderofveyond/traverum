@@ -80,73 +80,73 @@ export default async function ConfirmationPage({ params }: ConfirmationPageProps
       />
       
       <main className="max-w-2xl mx-auto px-4 py-12">
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <div className="bg-card rounded-card border border-border p-8 text-center">
           {/* Success icon */}
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center">
-            <svg className="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-success/10 flex items-center justify-center">
+            <svg className="w-10 h-10 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
           
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-heading text-card-foreground mb-2">
             Booking Confirmed!
           </h1>
           
-          <p className="text-gray-600 mb-8">
+          <p className="text-muted-foreground mb-8">
             Thank you for your booking. We've sent a confirmation email to{' '}
-            <strong>{reservation.guest_email}</strong>
+            <strong className="text-foreground">{reservation.guest_email}</strong>
           </p>
           
           {/* Booking reference */}
           {booking && (
-            <div className="inline-block bg-gray-100 rounded-lg px-4 py-2 mb-8">
-              <span className="text-sm text-gray-500">Booking Reference</span>
-              <div className="font-mono text-lg font-bold text-gray-900">
+            <div className="inline-block bg-muted rounded-button px-4 py-2 mb-8">
+              <span className="text-sm text-muted-foreground">Booking Reference</span>
+              <div className="font-mono text-lg font-bold text-card-foreground">
                 {booking.id.slice(0, 8).toUpperCase()}
               </div>
             </div>
           )}
           
           {/* Booking details */}
-          <div className="bg-gray-50 rounded-lg p-6 text-left mb-8">
-            <h3 className="font-semibold text-gray-900 mb-4">Booking Details</h3>
+          <div className="bg-background-alt rounded-card p-6 text-left mb-8">
+            <h3 className="font-semibold text-card-foreground mb-4">Booking Details</h3>
             
-            <div className="space-y-3">
+            <div className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Experience</span>
-                <span className="font-medium text-gray-900">{experience.title}</span>
+                <span className="text-muted-foreground">Experience</span>
+                <span className="font-medium text-card-foreground">{experience.title}</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-gray-600">Date</span>
-                <span className="font-medium text-gray-900">
+                <span className="text-muted-foreground">Date</span>
+                <span className="font-medium text-card-foreground">
                   {date ? formatDate(date) : 'TBD'}
                 </span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-gray-600">Time</span>
-                <span className="font-medium text-gray-900">
+                <span className="text-muted-foreground">Time</span>
+                <span className="font-medium text-card-foreground">
                   {time ? formatTime(time) : 'TBD'}
                 </span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-gray-600">Participants</span>
-                <span className="font-medium text-gray-900">{reservation.participants}</span>
+                <span className="text-muted-foreground">Participants</span>
+                <span className="font-medium text-card-foreground">{reservation.participants}</span>
               </div>
               
               {experience.meeting_point && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Meeting Point</span>
-                  <span className="font-medium text-gray-900 text-right max-w-[60%]">
+                  <span className="text-muted-foreground">Meeting Point</span>
+                  <span className="font-medium text-card-foreground text-right max-w-[60%]">
                     {experience.meeting_point}
                   </span>
                 </div>
               )}
               
-              <div className="pt-3 border-t border-gray-200 flex justify-between">
-                <span className="font-semibold text-gray-900">Total Paid</span>
+              <div className="pt-3 border-t border-border flex justify-between">
+                <span className="font-semibold text-card-foreground">Total Paid</span>
                 <span className="font-bold text-accent text-lg">
                   {formatPrice(reservation.total_cents, experience.currency)}
                 </span>
@@ -156,22 +156,22 @@ export default async function ConfirmationPage({ params }: ConfirmationPageProps
           
           {/* What's next */}
           <div className="text-left mb-8">
-            <h3 className="font-semibold text-gray-900 mb-3">What's Next?</h3>
-            <ul className="space-y-2 text-sm text-gray-600">
+            <h3 className="font-semibold text-card-foreground mb-3">What's Next?</h3>
+            <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
-                <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-success flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Confirmation email sent to your inbox
               </li>
               <li className="flex items-start gap-2">
-                <svg className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-muted-foreground/50 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Arrive at the meeting point on time
               </li>
               <li className="flex items-start gap-2">
-                <svg className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-muted-foreground/50 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
                 The provider may contact you with more details
@@ -182,7 +182,7 @@ export default async function ConfirmationPage({ params }: ConfirmationPageProps
           {/* Back link */}
           <Link
             href={`/${hotelSlug}`}
-            className="btn-primary px-6 py-3 inline-flex"
+            className="inline-flex items-center justify-center px-6 py-3.5 bg-accent text-accent-foreground font-medium rounded-button hover:bg-accent-hover transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
             Browse More Experiences
           </Link>

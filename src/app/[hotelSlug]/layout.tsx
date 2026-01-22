@@ -58,16 +58,31 @@ export default async function HotelLayout({ children, params }: HotelLayoutProps
   const backgroundColor = hotel.background_color || '#ffffff'
   const backgroundHsl = hexToHsl(backgroundColor)
   
-  // Calculate background-alt (slightly lighter for subtle contrast)
+  // Calculate background-alt (slightly different for subtle contrast)
   const [bgH, bgS, bgL] = backgroundHsl.split(' ').map(v => parseFloat(v.replace('%', '')))
-  const backgroundAltL = Math.min(100, bgL + 2) // Lighten by 2%
+  const isDarkBackground = bgL < 50
+  const backgroundAltL = isDarkBackground ? Math.min(100, bgL + 3) : Math.max(0, bgL - 2)
+  
+  // Calculate card background (slightly different from main background)
+  const cardBgL = isDarkBackground ? Math.min(100, bgL + 5) : bgL
+  const cardBgHsl = `${bgH} ${bgS}% ${cardBgL}%`
+  
+  // Calculate border color based on background lightness
+  const borderL = isDarkBackground ? Math.min(100, bgL + 15) : Math.max(0, bgL - 10)
+  const borderHsl = `${bgH} ${Math.max(0, bgS - 10)}% ${borderL}%`
+  
+  // Calculate muted/secondary background
+  const mutedBgL = isDarkBackground ? Math.min(100, bgL + 8) : Math.max(0, bgL - 4)
+  const mutedBgHsl = `${bgH} ${bgS}% ${mutedBgL}%`
   
   // Auto-calculate link color: black if bg is light, white if dark
   const linkColor = bgL > 50 ? '0 0% 10%' : '0 0% 95%'
   
-  // Calculate muted text color (lighter version of text color for secondary text)
+  // Calculate muted text color (appropriate contrast for background)
   const [textH, textS, textL] = textHsl.split(' ').map(v => parseFloat(v.replace('%', '')))
-  const mutedTextL = Math.min(100, textL + 30) // Lighten by 30% for muted text
+  const mutedTextL = isDarkBackground 
+    ? Math.max(0, textL - 25) // Darken muted text for dark backgrounds
+    : Math.min(100, textL + 30) // Lighten muted text for light backgrounds
   const mutedTextHsl = `${textH} ${Math.max(0, textS - 20)}% ${mutedTextL}%`
   
   // Get card radius - ensure we handle the "0" string case properly
@@ -91,8 +106,16 @@ export default async function HotelLayout({ children, params }: HotelLayoutProps
     '--foreground': textHsl,
     '--background': backgroundHsl,
     '--background-alt': `${bgH} ${bgS}% ${backgroundAltL}%`,
-    '--muted-foreground': mutedTextHsl,
+    '--card': cardBgHsl,
     '--card-foreground': textHsl,
+    '--border': borderHsl,
+    '--input': borderHsl,
+    '--muted': mutedBgHsl,
+    '--muted-foreground': mutedTextHsl,
+    '--secondary': mutedBgHsl,
+    '--secondary-foreground': textHsl,
+    '--popover': cardBgHsl,
+    '--popover-foreground': textHsl,
     '--radius-card': cardRadius,
     // Font families
     '--font-heading': headingFont,
