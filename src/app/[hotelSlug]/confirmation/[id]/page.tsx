@@ -5,6 +5,9 @@ import { getHotelBySlug } from '@/lib/hotels'
 import { formatDate, formatTime, formatPrice } from '@/lib/utils'
 import { Header } from '@/components/Header'
 
+// Force dynamic rendering so hotel config changes take effect immediately
+export const dynamic = 'force-dynamic'
+
 interface ConfirmationPageProps {
   params: Promise<{ hotelSlug: string; id: string }>
 }
@@ -144,7 +147,7 @@ export default async function ConfirmationPage({ params }: ConfirmationPageProps
               
               <div className="pt-3 border-t border-gray-200 flex justify-between">
                 <span className="font-semibold text-gray-900">Total Paid</span>
-                <span className="font-bold text-primary text-lg">
+                <span className="font-bold text-accent text-lg">
                   {formatPrice(reservation.total_cents, experience.currency)}
                 </span>
               </div>

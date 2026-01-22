@@ -32,7 +32,7 @@ export function ParticipantSelector({
   }
   
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between font-body">
       <div>
         <span className="text-sm font-medium text-foreground">How many people?</span>
         {availableSpots && availableSpots < max && (
@@ -51,7 +51,7 @@ export function ParticipantSelector({
             'w-9 h-9 rounded-full border flex items-center justify-center transition-colors',
             value <= min
               ? 'border-border text-muted-foreground cursor-not-allowed'
-              : 'border-border text-foreground hover:border-primary/50 hover:bg-muted'
+              : 'border-border text-foreground hover:border-accent/50 hover:bg-muted'
           )}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -71,7 +71,7 @@ export function ParticipantSelector({
             'w-9 h-9 rounded-full border flex items-center justify-center transition-colors',
             value >= effectiveMax
               ? 'border-border text-muted-foreground cursor-not-allowed'
-              : 'border-border text-foreground hover:border-primary/50 hover:bg-muted'
+              : 'border-border text-foreground hover:border-accent/50 hover:bg-muted'
           )}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

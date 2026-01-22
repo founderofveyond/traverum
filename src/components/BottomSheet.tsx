@@ -101,7 +101,7 @@ export function BottomSheet({
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-2xl max-h-[85vh] overflow-auto safe-area-bottom"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-2xl max-h-[85vh] overflow-auto safe-area-bottom font-body"
           >
             {/* Drag Handle */}
             <div className="sticky top-0 bg-background pt-3 pb-4 flex justify-center">
@@ -141,7 +141,7 @@ export function BottomSheet({
               </div>
 
               <div className="text-right mb-5">
-                <span className="text-xl font-bold text-primary">
+                <span className="text-xl font-bold text-accent">
                   Total: {formatPrice(priceCalc.totalPrice, experience.currency)}
                 </span>
               </div>
@@ -149,7 +149,7 @@ export function BottomSheet({
               <button
                 onClick={handleContinue}
                 disabled={!canContinue}
-                className="w-full py-3.5 bg-primary text-primary-foreground font-medium rounded-button hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                className="w-full py-3.5 bg-accent text-accent-foreground font-medium rounded-button hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               >
                 {isCustomRequest ? 'Send Request' : 'Reserve'}
               </button>

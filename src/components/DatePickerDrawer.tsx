@@ -58,7 +58,7 @@ export function DatePickerDrawer({
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed inset-x-0 bottom-0 z-50 bg-background rounded-t-2xl max-h-[85vh] overflow-hidden flex flex-col"
+            className="fixed inset-x-0 bottom-0 z-50 bg-background rounded-t-2xl max-h-[85vh] overflow-hidden flex flex-col font-body"
           >
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-2">
@@ -67,7 +67,7 @@ export function DatePickerDrawer({
             
             {/* Header */}
             <div className="flex items-center justify-between px-4 pb-4 border-b border-border">
-              <h3 className="text-lg font-semibold text-foreground">Request your time</h3>
+              <h3 className="text-lg font-body text-foreground">Request your time</h3>
               <button
                 onClick={onClose}
                 className="p-2 -mr-2 text-muted-foreground hover:text-foreground transition-colors"
@@ -97,7 +97,7 @@ export function DatePickerDrawer({
               <button
                 onClick={onConfirm}
                 disabled={!hasSelection}
-                className="w-full py-3.5 bg-primary text-primary-foreground font-medium rounded-button hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3.5 bg-accent text-accent-foreground font-medium rounded-button hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Confirm
               </button>

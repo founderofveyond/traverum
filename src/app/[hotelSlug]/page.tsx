@@ -6,6 +6,9 @@ import { Header } from '@/components/Header'
 import { ExperienceCard } from '@/components/ExperienceCard'
 import { ExperienceListClient } from '@/components/ExperienceListClient'
 
+// Inherit dynamic from layout - hotel config changes take effect immediately
+export const dynamic = 'force-dynamic'
+
 interface HotelPageProps {
   params: Promise<{ hotelSlug: string }>
   searchParams: Promise<{ embed?: string }>
@@ -23,6 +26,11 @@ export default async function HotelPage({ params, searchParams }: HotelPageProps
   }
   
   const { hotel, experiences } = data
+  const titleEnabled = hotel.widget_title_enabled ?? true
+  const widgetTitle = hotel.widget_title || 'Local Experiences'
+  const rawSubtitle =
+    hotel.widget_subtitle || 'Curated by the team at {{hotel_name}}'
+  const widgetSubtitle = rawSubtitle.replace('{{hotel_name}}', hotel.display_name)
   
   // In section mode, limit to 3 experiences
   const displayExperiences = embedMode === 'section' 
@@ -48,11 +56,25 @@ export default async function HotelPage({ params, searchParams }: HotelPageProps
         'container',
         embedMode === 'full' ? 'px-4 py-6' : 'p-4'
       )}>
-        {/* Title */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-foreground">Local Experiences</h1>
-          <p className="text-muted-foreground mt-1">Curated by our concierge team</p>
-        </div>
+        {/* Title - configurable, shown in both embed modes */}
+        {titleEnabled && (
+          <div className="mb-6">
+            <h1 
+              className="font-heading text-foreground"
+              style={{ fontSize: 'var(--font-size-title)' }}
+            >
+              {widgetTitle}
+            </h1>
+            {widgetSubtitle && (
+              <p 
+                className="text-muted-foreground mt-2"
+                style={{ fontSize: 'var(--font-size-h3)' }}
+              >
+                {widgetSubtitle}
+              </p>
+            )}
+          </div>
+        )}
         
         {/* Experience grid */}
         {experiences.length > 0 ? (
@@ -70,7 +92,7 @@ export default async function HotelPage({ params, searchParams }: HotelPageProps
                   href={`/${hotelSlug}?embed=full`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-link hover:underline"
                 >
                   View all {experiences.length} experiences
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

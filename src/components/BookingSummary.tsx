@@ -42,7 +42,7 @@ export function BookingSummary({
       <div className="p-5 space-y-4">
         {/* Title */}
         <div>
-          <h3 className="font-semibold text-card-foreground">{experience.title}</h3>
+          <h3 className="font-heading text-card-foreground">{experience.title}</h3>
           <p className="text-sm text-muted-foreground mt-0.5">{formatDuration(experience.duration_minutes)}</p>
         </div>
         
@@ -79,7 +79,7 @@ export function BookingSummary({
         <div className="pt-4 border-t border-border">
           <div className="flex justify-between items-center">
             <span className="font-semibold text-card-foreground">Total</span>
-            <span className="text-xl font-bold text-primary">
+            <span className="text-xl font-bold text-accent">
               {formatPrice(totalCents, experience.currency)}
             </span>
           </div>

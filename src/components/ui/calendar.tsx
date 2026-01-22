@@ -24,7 +24,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         nav_button: cn(
           'h-7 w-7 bg-transparent p-0 inline-flex items-center justify-center rounded-md border border-input',
           'text-muted-foreground hover:text-foreground hover:bg-accent transition-colors',
-          'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary'
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent'
         ),
         nav_button_previous: 'absolute left-1',
         nav_button_next: 'absolute right-1',
@@ -45,15 +45,15 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         ),
         day: cn(
           'h-10 w-10 p-0 font-normal inline-flex items-center justify-center rounded-md transition-colors mx-auto',
-          'hover:bg-primary/10 hover:text-primary cursor-pointer',
-          'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+          'hover:bg-accent/10 hover:text-accent cursor-pointer',
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent',
           'aria-selected:opacity-100'
         ),
         day_range_end: 'day-range-end',
         day_selected: cn(
-          'bg-primary text-primary-foreground font-medium',
-          'hover:bg-primary hover:text-primary-foreground',
-          'focus:bg-primary focus:text-primary-foreground'
+          'bg-accent text-accent-foreground font-medium',
+          'hover:bg-accent hover:text-accent-foreground',
+          'focus:bg-accent focus:text-accent-foreground'
         ),
         day_today: 'bg-accent text-accent-foreground font-semibold',
         day_outside: 'day-outside text-muted-foreground/40 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',

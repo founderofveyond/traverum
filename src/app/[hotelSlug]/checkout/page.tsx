@@ -8,6 +8,9 @@ import { CheckoutForm } from '@/components/CheckoutForm'
 import { BookingSummary } from '@/components/BookingSummary'
 import type { Experience, ExperienceSession } from '@/lib/supabase/types'
 
+// Force dynamic rendering so hotel config changes take effect immediately
+export const dynamic = 'force-dynamic'
+
 interface CheckoutPageProps {
   params: Promise<{ hotelSlug: string }>
   searchParams: Promise<{
@@ -106,7 +109,7 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
           Back to experience
         </Link>
         
-        <h1 className="text-2xl font-semibold text-foreground mb-6">
+        <h1 className="text-2xl text-foreground mb-6">
           Complete Your Booking
         </h1>
         
@@ -114,7 +117,7 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
           {/* Form */}
           <div className="lg:col-span-3">
             <div className="bg-card rounded-card border border-border p-6">
-              <h2 className="text-lg font-semibold text-card-foreground mb-5">
+              <h2 className="text-lg font-body text-card-foreground mb-5">
                 Guest Details
               </h2>
               

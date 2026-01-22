@@ -6,7 +6,11 @@ import { Header } from '@/components/Header'
 import { ImageGallery } from '@/components/ImageGallery'
 import { BookingPanel } from '@/components/BookingPanel'
 import { ExperienceDetailClient } from '@/components/ExperienceDetailClient'
+import { RichText } from '@/components/RichText'
 import type { Metadata } from 'next'
+
+// Force dynamic rendering so hotel config changes take effect immediately
+export const dynamic = 'force-dynamic'
 
 interface ExperiencePageProps {
   params: Promise<{ hotelSlug: string; experienceSlug: string }>
@@ -71,33 +75,67 @@ export default async function ExperiencePage({ params, searchParams }: Experienc
             />
             
             <div className="mt-5">
-              <h1 className="text-2xl font-semibold text-foreground">{experience.title}</h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <h1 
+                className="font-heading text-foreground"
+                style={{ fontSize: 'var(--font-size-h1)' }}
+              >
+                {experience.title}
+              </h1>
+              <p 
+                className="text-muted-foreground mt-1"
+                style={{ fontSize: 'var(--font-size-sm)' }}
+              >
                 {formatDuration(experience.duration_minutes)} · Up to {experience.max_participants} people
               </p>
-              <p className="text-sm text-foreground mt-3 leading-relaxed">
-                {experience.description}
-              </p>
+              <RichText
+                text={experience.description}
+                className="text-foreground mt-3 leading-relaxed font-body"
+                style={{ fontSize: 'var(--font-size-body)' }}
+              />
             </div>
 
             {/* Info Sections */}
             <div className="mt-6 pt-6 border-t border-border space-y-4">
               <div>
-                <h3 className="text-sm font-semibold text-foreground">How it works</h3>
-                <p className="text-xs text-muted-foreground mt-0.5">
+                <h3 
+                  className="font-body text-foreground"
+                  style={{ fontSize: 'var(--font-size-h3)' }}
+                >
+                  How it works
+                </h3>
+                <p 
+                  className="text-muted-foreground mt-0.5"
+                  style={{ fontSize: 'var(--font-size-sm)' }}
+                >
                   Reserve now — free and non-binding. Pay after provider confirms.
                 </p>
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-foreground">Cancellation</h3>
-                <p className="text-xs text-muted-foreground mt-0.5">
+                <h3 
+                  className="font-body text-foreground"
+                  style={{ fontSize: 'var(--font-size-h3)' }}
+                >
+                  Cancellation
+                </h3>
+                <p 
+                  className="text-muted-foreground mt-0.5"
+                  style={{ fontSize: 'var(--font-size-sm)' }}
+                >
                   Free cancellation up to 7 days before.
                 </p>
               </div>
               {experience.meeting_point && (
                 <div>
-                  <h3 className="text-sm font-semibold text-foreground">Meeting point</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <h3 
+                    className="font-body text-foreground"
+                    style={{ fontSize: 'var(--font-size-h3)' }}
+                  >
+                    Meeting point
+                  </h3>
+                  <p 
+                    className="text-muted-foreground mt-0.5"
+                    style={{ fontSize: 'var(--font-size-sm)' }}
+                  >
                     {experience.meeting_point}
                   </p>
                 </div>

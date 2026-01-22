@@ -24,7 +24,7 @@ export function ExperienceCard({ experience, hotelSlug, embedMode = 'full' }: Ex
       href={href}
       {...linkProps}
       className={cn(
-        'block rounded-card overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+        'block rounded-card overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2',
         embedMode === 'section' && 'hover:shadow-card-hover transition-shadow'
       )}
     >
@@ -46,7 +46,7 @@ export function ExperienceCard({ experience, hotelSlug, embedMode = 'full' }: Ex
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        <h3 className="absolute bottom-4 left-4 right-4 font-semibold text-lg text-primary-foreground">
+        <h3 className="absolute bottom-4 left-4 right-4 font-heading text-lg text-white">
           {experience.title}
         </h3>
       </div>

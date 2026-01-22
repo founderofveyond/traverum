@@ -84,7 +84,7 @@ export function ImageGallery({ images, fallbackImage, title }: ImageGalleryProps
       <div className="hidden md:block">
         <button
           onClick={openLightbox}
-          className="w-full aspect-video rounded-card overflow-hidden cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="w-full aspect-video rounded-card overflow-hidden cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           <AnimatePresence mode="wait">
             <motion.img
@@ -107,9 +107,9 @@ export function ImageGallery({ images, fallbackImage, title }: ImageGalleryProps
                 key={index}
                 onClick={() => handleThumbnailClick(index)}
                 className={cn(
-                  'h-20 aspect-square rounded-lg overflow-hidden transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                  'h-20 aspect-square rounded-lg overflow-hidden transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent',
                   index === currentIndex
-                    ? 'ring-2 ring-primary'
+                    ? 'ring-2 ring-accent'
                     : 'opacity-70 hover:opacity-100'
                 )}
               >
@@ -171,7 +171,7 @@ export function ImageGallery({ images, fallbackImage, title }: ImageGalleryProps
                   onClick={(e) => { e.stopPropagation(); setCurrentIndex(index); }}
                   className={cn(
                     'w-2 h-2 rounded-full transition-colors duration-150',
-                    index === currentIndex ? 'bg-primary' : 'bg-foreground/30'
+                    index === currentIndex ? 'bg-accent' : 'bg-foreground/30'
                   )}
                   aria-label={`Go to image ${index + 1}`}
                 />

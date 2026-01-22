@@ -21,13 +21,13 @@ export function MobileBookingBar({
   const priceCalc = calculatePrice(experience, participants, selectedSession)
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border px-4 py-3 flex items-center justify-between md:hidden z-40 safe-area-bottom">
+    <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border px-4 py-3 flex items-center justify-between md:hidden z-40 safe-area-bottom font-body">
       <div>
         <span className="font-bold text-foreground">{formatPrice(priceCalc.totalPrice, experience.currency)}</span>
       </div>
       <button
         onClick={onReserveClick}
-        className="px-6 py-3 bg-primary text-primary-foreground font-medium rounded-button hover:bg-primary-hover transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        className="px-6 py-3 bg-accent text-accent-foreground font-medium rounded-button hover:bg-accent-hover transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
       >
         Reserve
       </button>

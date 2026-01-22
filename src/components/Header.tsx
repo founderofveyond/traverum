@@ -30,7 +30,7 @@ export function Header({ hotelName, logoUrl, hotelSlug, showBack = false, backTo
         {showBack ? (
           <button
             onClick={handleBack}
-            className="flex items-center justify-center w-10 h-10 -ml-2 rounded-button hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="flex items-center justify-center w-10 h-10 -ml-2 rounded-button hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             aria-label="Go back"
           >
             <ArrowLeft className="w-5 h-5 text-foreground" />
@@ -46,7 +46,7 @@ export function Header({ hotelName, logoUrl, hotelSlug, showBack = false, backTo
                 className="rounded-lg object-contain"
               />
             ) : null}
-            <h1 className="text-lg font-semibold text-foreground">{hotelName}</h1>
+            <h1 className="text-lg text-foreground">{hotelName}</h1>
           </Link>
         )}
       </div>

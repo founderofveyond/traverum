@@ -5,6 +5,9 @@ import { getHotelBySlug } from '@/lib/hotels'
 import { formatDate, formatTime, formatPrice, cn } from '@/lib/utils'
 import { Header } from '@/components/Header'
 
+// Force dynamic rendering so hotel config changes take effect immediately
+export const dynamic = 'force-dynamic'
+
 interface ReservationPageProps {
   params: Promise<{ hotelSlug: string; id: string }>
   searchParams: Promise<{ embed?: string }>
@@ -82,7 +85,7 @@ export default async function ReservationPage({ params, searchParams }: Reservat
             </div>
             
             {/* Status title */}
-            <h1 className="text-3xl font-semibold text-card-foreground mb-3">
+            <h1 className="text-3xl text-card-foreground mb-3">
               {reservation.reservation_status === 'pending' && 'Request Sent!'}
               {reservation.reservation_status === 'approved' && 'Booking Approved!'}
               {reservation.reservation_status === 'declined' && 'Booking Unavailable'}
@@ -103,7 +106,7 @@ export default async function ReservationPage({ params, searchParams }: Reservat
             
             {/* Booking details */}
             <div className="bg-background-alt rounded-card p-6 text-left mb-8">
-              <h3 className="font-semibold text-foreground mb-4">Booking Details</h3>
+              <h3 className="font-body text-foreground mb-4">Booking Details</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Experience</span>
@@ -127,7 +130,7 @@ export default async function ReservationPage({ params, searchParams }: Reservat
                 </div>
                 <div className="flex justify-between pt-3 border-t border-border">
                   <span className="font-semibold text-foreground">Total</span>
-                  <span className="text-xl font-bold text-primary">
+                  <span className="text-xl font-bold text-accent">
                     {formatPrice(reservation.total_cents, experience.currency)}
                   </span>
                 </div>
@@ -138,7 +141,7 @@ export default async function ReservationPage({ params, searchParams }: Reservat
             {reservation.reservation_status === 'approved' && reservation.stripe_payment_link_url && (
               <a
                 href={reservation.stripe_payment_link_url}
-                className="inline-flex items-center justify-center px-8 py-3.5 bg-primary text-primary-foreground font-medium rounded-button hover:bg-primary-hover transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="inline-flex items-center justify-center px-8 py-3.5 bg-accent text-accent-foreground font-medium rounded-button hover:bg-accent-hover transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
               >
                 Complete Payment
               </a>

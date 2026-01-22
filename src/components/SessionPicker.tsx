@@ -97,7 +97,7 @@ export function SessionPicker({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 font-body">
       {/* Primary: Request Form */}
       <div className="space-y-3">
         <p className="text-sm font-medium text-foreground">
@@ -142,10 +142,10 @@ export function SessionPicker({
                       onClick={() => handleTimeSelect(time)}
                       className={cn(
                         'py-2.5 text-sm rounded-lg border transition-all font-medium',
-                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1',
+                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1',
                         customTime === time && isCustomRequest
-                          ? 'border-primary bg-primary text-primary-foreground'
-                          : 'border-border bg-background hover:border-primary hover:bg-primary/5 text-foreground'
+                          ? 'border-accent bg-accent text-accent-foreground'
+                          : 'border-border bg-background hover:border-accent hover:bg-accent/5 text-foreground'
                       )}
                     >
                       {time}
@@ -192,8 +192,8 @@ export function SessionPicker({
                   onClick={() => handleSessionSelect(session.id)}
                   className={`w-full flex items-center justify-between py-3 px-4 rounded-lg border-2 transition-all ${
                     selectedSessionId === session.id && !isCustomRequest
-                      ? 'border-primary bg-primary/10'
-                      : 'border-border hover:border-primary/50 bg-background'
+                      ? 'border-accent bg-accent/10'
+                      : 'border-border hover:border-accent/50 bg-background'
                   }`}
                 >
                   <div className="flex flex-col items-start">

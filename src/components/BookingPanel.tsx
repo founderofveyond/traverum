@@ -96,7 +96,7 @@ export function BookingPanel({ experience, sessions, hotelSlug }: BookingPanelPr
 
   return (
     <>
-      <div className="bg-background-alt rounded-card p-5">
+      <div className="bg-background-alt rounded-card p-5 font-body">
         {/* Price */}
         <div className="flex items-baseline gap-1.5 mb-4">
           <span className="text-2xl font-bold text-foreground">{displayPrice.price}</span>
@@ -106,7 +106,7 @@ export function BookingPanel({ experience, sessions, hotelSlug }: BookingPanelPr
         {/* Date Selector Button */}
         <button
           onClick={() => setDateDrawerOpen(true)}
-          className="w-full flex items-center justify-between px-4 py-3 border border-border rounded-button bg-background hover:border-primary/50 transition-colors text-left"
+          className="w-full flex items-center justify-between px-4 py-3 border border-border rounded-button bg-background hover:border-accent/50 transition-colors text-left"
         >
           <div className="flex items-center gap-3">
             <Calendar className="w-5 h-5 text-muted-foreground" />
@@ -150,7 +150,7 @@ export function BookingPanel({ experience, sessions, hotelSlug }: BookingPanelPr
           <button
             onClick={handleContinue}
             disabled={!hasDateSelection}
-            className="w-full py-3.5 bg-primary text-primary-foreground font-medium rounded-button hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="w-full py-3.5 bg-accent text-accent-foreground font-medium rounded-button hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
             {isCustomRequest ? 'Send Request' : 'Reserve'}
           </button>

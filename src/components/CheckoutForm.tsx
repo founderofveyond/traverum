@@ -88,7 +88,7 @@ export function CheckoutForm({
   }
   
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 font-body">
       {error && (
         <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-button text-sm border border-destructive/20">
           {error}
@@ -105,7 +105,7 @@ export function CheckoutForm({
             type="text"
             id="firstName"
             className={cn(
-              'w-full px-4 py-2.5 border rounded-button bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors',
+              'w-full px-4 py-2.5 border rounded-button bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-colors',
               errors.firstName ? 'border-destructive' : 'border-border'
             )}
             disabled={isSubmitting}
@@ -124,7 +124,7 @@ export function CheckoutForm({
             type="text"
             id="lastName"
             className={cn(
-              'w-full px-4 py-2.5 border rounded-button bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors',
+              'w-full px-4 py-2.5 border rounded-button bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-colors',
               errors.lastName ? 'border-destructive' : 'border-border'
             )}
             disabled={isSubmitting}
@@ -144,7 +144,7 @@ export function CheckoutForm({
           type="email"
           id="email"
           className={cn(
-            'w-full px-4 py-2.5 border rounded-button bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors',
+            'w-full px-4 py-2.5 border rounded-button bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-colors',
             errors.email ? 'border-destructive' : 'border-border'
           )}
           disabled={isSubmitting}
@@ -164,7 +164,7 @@ export function CheckoutForm({
           type="tel"
           id="phone"
           className={cn(
-            'w-full px-4 py-2.5 border rounded-button bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors',
+            'w-full px-4 py-2.5 border rounded-button bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-colors',
             errors.phone ? 'border-destructive' : 'border-border'
           )}
           disabled={isSubmitting}
@@ -182,7 +182,7 @@ export function CheckoutForm({
         type="submit"
         disabled={isSubmitting}
         className={cn(
-          'w-full py-3.5 bg-primary text-primary-foreground font-medium rounded-button hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+          'w-full py-3.5 bg-accent text-accent-foreground font-medium rounded-button hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2',
           isSubmitting && 'opacity-50 cursor-not-allowed'
         )}
       >

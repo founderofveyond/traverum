@@ -1,11 +1,18 @@
 import type { Metadata } from 'next'
-import { Poppins } from 'next/font/google'
+import { Poppins, Fraunces } from 'next/font/google'
 import './globals.css'
 
 const poppins = Poppins({ 
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-sans',
+})
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800'],
+  variable: '--font-fraunces',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -20,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} font-sans antialiased`}>
+      <body className={`${poppins.variable} ${fraunces.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>

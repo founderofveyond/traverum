@@ -18,7 +18,9 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        sans: ['Poppins', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-heading)', 'Georgia', 'serif'],
+        body: ['var(--font-body)', 'Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -29,10 +31,10 @@ const config: Config = {
           alt: 'hsl(var(--background-alt))',
         },
         foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          hover: 'hsl(var(--primary-hover))',
-          foreground: 'hsl(var(--primary-foreground))',
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          hover: 'hsl(var(--accent-hover))',
+          foreground: 'hsl(var(--accent-foreground))',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -46,10 +48,7 @@ const config: Config = {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))',
         },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
-        },
+        link: 'hsl(var(--link-color))',
         success: {
           DEFAULT: 'hsl(var(--success))',
           foreground: 'hsl(var(--success-foreground))',

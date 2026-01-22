@@ -37,6 +37,20 @@ export async function getHotelBySlug(slug: string): Promise<HotelConfig | null> 
     .eq('is_active', true)
     .single()
   
+  // Debug: Log the raw response from Supabase
+  console.log('[getHotelBySlug] Supabase response:', {
+    slug,
+    error: error ? { message: error.message, code: error.code, details: error.details } : null,
+    data: data ? {
+      id: data.id,
+      slug: data.slug,
+      accent_color: data.accent_color,
+      card_radius: data.card_radius,
+      widget_title: data.widget_title,
+    } : null,
+    rawData: data,
+  })
+  
   if (error || !data) {
     return null
   }

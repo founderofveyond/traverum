@@ -264,7 +264,19 @@ export type Database = {
           is_active: boolean | null
           logo_url: string | null
           partner_id: string
-          primary_color: string | null
+          accent_color: string | null
+          text_color: string | null
+          background_color: string | null
+          card_radius: string | null
+          heading_font_family: string | null
+          body_font_family: string | null
+          heading_font_weight: string | null
+          font_weight: string | null
+          font_size_base: string | null
+          title_font_size: string | null
+          widget_title_enabled: boolean | null
+          widget_title: string | null
+          widget_subtitle: string | null
           slug: string
           updated_at: string | null
         }
@@ -275,7 +287,19 @@ export type Database = {
           is_active?: boolean | null
           logo_url?: string | null
           partner_id: string
-          primary_color?: string | null
+          accent_color?: string | null
+          text_color?: string | null
+          background_color?: string | null
+          card_radius?: string | null
+          heading_font_family?: string | null
+          body_font_family?: string | null
+          heading_font_weight?: string | null
+          font_weight?: string | null
+          font_size_base?: string | null
+          title_font_size?: string | null
+          widget_title_enabled?: boolean | null
+          widget_title?: string | null
+          widget_subtitle?: string | null
           slug: string
           updated_at?: string | null
         }
@@ -286,7 +310,19 @@ export type Database = {
           is_active?: boolean | null
           logo_url?: string | null
           partner_id?: string
-          primary_color?: string | null
+          accent_color?: string | null
+          text_color?: string | null
+          background_color?: string | null
+          card_radius?: string | null
+          heading_font_family?: string | null
+          body_font_family?: string | null
+          heading_font_weight?: string | null
+          font_weight?: string | null
+          font_size_base?: string | null
+          title_font_size?: string | null
+          widget_title_enabled?: boolean | null
+          widget_title?: string | null
+          widget_subtitle?: string | null
           slug?: string
           updated_at?: string | null
         }
