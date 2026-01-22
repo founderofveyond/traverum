@@ -43,7 +43,7 @@ export default async function HotelPage({ params, searchParams }: HotelPageProps
   
   // #region agent log
   // Visible debug banner for production debugging - REMOVE AFTER FIX VERIFIED
-  const BUILD_VERSION = 'FIX6-RED-BANNER'; // Update this to verify deployment
+  const BUILD_VERSION = 'FIX7-FONT-FIX'; // Update this to verify deployment
   const debugInfo = {
     v: BUILD_VERSION,
     id: hotel.id,

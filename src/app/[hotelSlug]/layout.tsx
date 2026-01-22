@@ -147,7 +147,7 @@ export default async function HotelLayout({ children, params }: HotelLayoutProps
   // #endregion
   
   // #region agent log
-  // Inject CSS variables into :root via style tag for global access
+  // Inject CSS variables - use body level so --font-fraunces from Next.js is accessible
   const cssVarsString = Object.entries(cssVariables)
     .map(([key, value]) => `${key}: ${value};`)
     .join('\n    ');
@@ -155,19 +155,22 @@ export default async function HotelLayout({ children, params }: HotelLayoutProps
   
   return (
     <>
-      {/* Inject CSS variables globally into :root */}
+      {/* Inject CSS variables at body level where Next.js font variables are available */}
       <style dangerouslySetInnerHTML={{
         __html: `
-          :root {
-            ${cssVarsString}
-          }
           body {
+            ${cssVarsString}
             background-color: ${backgroundColor} !important;
             color: ${textColor} !important;
+          }
+          /* Also set on the wrapper for components that need it */
+          [data-hotel-theme] {
+            ${cssVarsString}
           }
         `
       }} />
       <div
+        data-hotel-theme="true"
         style={{
           fontFamily: bodyFont,
           fontSize: `${basePx}px`,
