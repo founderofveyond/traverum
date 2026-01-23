@@ -53,28 +53,51 @@ export default async function HotelPage({ params, searchParams }: HotelPageProps
       )}
       
       <main className={cn(
-        'container',
-        embedMode === 'full' ? 'px-4 py-6' : 'p-4'
+        embedMode === 'full' ? 'px-4 py-6' : ''
       )}>
         {/* Title - configurable, shown in both embed modes */}
         {titleEnabled && (
-          <div className="mb-6">
-            <h1 
-              className="font-heading text-foreground"
-              style={{ fontSize: 'var(--font-size-title)' }}
+          <div 
+            className={cn(
+              'w-full',
+              embedMode === 'section' ? 'mb-0' : 'mb-6'
+            )} 
+            style={embedMode === 'section' ? { 
+              marginTop: 0, 
+              marginBottom: 0,
+              paddingTop: 'var(--wp--preset--spacing--50, 3rem)',
+              paddingBottom: 'var(--wp--preset--spacing--50, 3rem)',
+              paddingLeft: 0,
+              paddingRight: 0
+            } : {}}
+          >
+            <div 
+              className={cn(
+                embedMode === 'section' ? 'max-w-[1480px] mx-auto px-4' : 'container mx-auto'
+              )}
             >
-              {widgetTitle}
-            </h1>
-            {widgetSubtitle && (
-              <p 
-                className="text-muted-foreground mt-2"
-                style={{ fontSize: 'var(--font-size-h3)' }}
+              <h1 
+                className="font-heading text-foreground"
+                style={{ fontSize: 'var(--font-size-title)' }}
               >
-                {widgetSubtitle}
-              </p>
-            )}
+                {widgetTitle}
+              </h1>
+              {widgetSubtitle && (
+                <p 
+                  className="text-muted-foreground mt-2"
+                  style={{ fontSize: 'var(--font-size-h3)' }}
+                >
+                  {widgetSubtitle}
+                </p>
+              )}
+            </div>
           </div>
         )}
+        
+        <div className={cn(
+          'container',
+          embedMode === 'full' ? 'px-4' : 'p-4'
+        )}>
         
         {/* Experience grid */}
         {experiences.length > 0 ? (
@@ -107,6 +130,7 @@ export default async function HotelPage({ params, searchParams }: HotelPageProps
             <p className="text-muted-foreground">No experiences available</p>
           </div>
         )}
+        </div>
       </main>
       
       {/* Embed mode resize script */}
