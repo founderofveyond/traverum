@@ -3,7 +3,6 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 
 interface HeaderProps {
   hotelName: string
@@ -38,40 +37,31 @@ export function Header({ hotelName, logoUrl, hotelSlug, showBack = false, backTo
     }
   }
 
-  const handleBack = () => {
-    // Prefer returning to the hotel site (when embedded)
-    if (returnUrl && isSafeHttpUrl(returnUrl)) {
-      window.location.assign(returnUrl)
+  const handleHotelButtonClick = () => {
+    // When embedded, this should take the user back to the original hotel site.
+    const target =
+      (returnUrl && isSafeHttpUrl(returnUrl) ? returnUrl : null) ||
+      (backTo && isSafeHttpUrl(backTo) ? backTo : null)
+
+    if (target) {
+      window.location.assign(target)
       return
     }
 
-    if (backTo) {
-      if (isSafeHttpUrl(backTo)) {
-        window.location.assign(backTo)
-      } else {
-        router.push(backTo)
-      }
-    } else {
-      router.back()
-    }
+    // Fallback: internal navigation to hotel experiences page
+    router.push(homeHref)
   }
 
   return (
     <header className="sticky top-0 z-40 bg-background border-b border-border">
       <div className="container flex items-center justify-between h-14 px-4">
         <div className="flex items-center gap-2 min-w-0">
-          {showBack && (
-            <button
-              onClick={handleBack}
-              className="inline-flex items-center gap-2 px-2 h-10 -ml-2 rounded-button hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              aria-label="Go back"
-            >
-              <ArrowLeft className="w-5 h-5 text-foreground" />
-              <span className="text-sm font-medium text-foreground">Back</span>
-            </button>
-          )}
-
-          <Link href={homeHref} className="flex items-center gap-3 min-w-0">
+          <button
+            type="button"
+            onClick={handleHotelButtonClick}
+            className="inline-flex items-center gap-3 px-2 h-10 -ml-2 rounded-button hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent min-w-0"
+            aria-label={`Back to ${hotelName}`}
+          >
             {logoUrl ? (
               <Image
                 src={logoUrl}
@@ -82,7 +72,7 @@ export function Header({ hotelName, logoUrl, hotelSlug, showBack = false, backTo
               />
             ) : null}
             <h1 className="text-lg text-foreground truncate">{hotelName}</h1>
-          </Link>
+          </button>
         </div>
 
         <div className="flex items-center gap-2">
