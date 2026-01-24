@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { X } from 'lucide-react'
 import { SessionPicker } from './SessionPicker'
 import { ParticipantSelector } from './ParticipantSelector'
@@ -45,6 +45,8 @@ export function BottomSheet({
   hotelSlug,
 }: BottomSheetProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const returnUrl = searchParams.get('returnUrl')
 
   useEffect(() => {
     if (isOpen) {
@@ -68,6 +70,7 @@ export function BottomSheet({
       params.set('experienceId', experience.id)
       params.set('participants', participants.toString())
       params.set('total', priceCalc.totalPrice.toString())
+      if (returnUrl) params.set('returnUrl', returnUrl)
       
       if (isCustomRequest) {
         params.set('requestDate', customDate)

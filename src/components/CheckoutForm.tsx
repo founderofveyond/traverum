@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -50,6 +50,8 @@ export function CheckoutForm({
   isDemo = false,
 }: CheckoutFormProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const returnUrl = searchParams.get('returnUrl')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showDemoSuccess, setShowDemoSuccess] = useState(false)
@@ -107,7 +109,10 @@ export function CheckoutForm({
       }
       
       // Redirect to confirmation page
-      router.push(`/${hotelSlug}/reservation/${result.reservationId}`)
+      const next = returnUrl
+        ? `/${hotelSlug}/reservation/${result.reservationId}?returnUrl=${encodeURIComponent(returnUrl)}`
+        : `/${hotelSlug}/reservation/${result.reservationId}`
+      router.push(next)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {

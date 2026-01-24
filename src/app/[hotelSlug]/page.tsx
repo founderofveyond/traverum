@@ -11,13 +11,14 @@ export const dynamic = 'force-dynamic'
 
 interface HotelPageProps {
   params: Promise<{ hotelSlug: string }>
-  searchParams: Promise<{ embed?: string }>
+  searchParams: Promise<{ embed?: string; returnUrl?: string }>
 }
 
 export default async function HotelPage({ params, searchParams }: HotelPageProps) {
   const { hotelSlug } = await params
   const search = await searchParams
   const embedMode = getEmbedMode(search)
+  const returnUrl = search.returnUrl
   
   const data = await getHotelWithExperiences(hotelSlug)
   
@@ -49,6 +50,8 @@ export default async function HotelPage({ params, searchParams }: HotelPageProps
           hotelName={hotel.display_name}
           logoUrl={hotel.logo_url}
           hotelSlug={hotelSlug}
+          showBack={Boolean(returnUrl)}
+          backTo={returnUrl}
         />
       )}
       
@@ -112,7 +115,11 @@ export default async function HotelPage({ params, searchParams }: HotelPageProps
             {hasMoreExperiences && (
               <div className="mt-6 text-center">
                 <Link
-                  href={`/${hotelSlug}?embed=full`}
+                  href={
+                    returnUrl
+                      ? `/${hotelSlug}?embed=full&returnUrl=${encodeURIComponent(returnUrl)}`
+                      : `/${hotelSlug}?embed=full`
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-sm font-medium text-link hover:underline"

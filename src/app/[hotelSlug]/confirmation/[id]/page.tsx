@@ -10,10 +10,13 @@ export const dynamic = 'force-dynamic'
 
 interface ConfirmationPageProps {
   params: Promise<{ hotelSlug: string; id: string }>
+  searchParams?: Promise<{ returnUrl?: string }>
 }
 
-export default async function ConfirmationPage({ params }: ConfirmationPageProps) {
+export default async function ConfirmationPage({ params, searchParams }: ConfirmationPageProps) {
   const { hotelSlug, id } = await params
+  const search = await searchParams
+  const returnUrl = search?.returnUrl
   
   const hotel = await getHotelBySlug(hotelSlug)
   if (!hotel) {
@@ -77,6 +80,8 @@ export default async function ConfirmationPage({ params }: ConfirmationPageProps
         hotelName={hotel.display_name}
         logoUrl={hotel.logo_url}
         hotelSlug={hotelSlug}
+        showBack={Boolean(returnUrl)}
+        backTo={returnUrl}
       />
       
       <main className="max-w-2xl mx-auto px-4 py-12">
@@ -181,7 +186,11 @@ export default async function ConfirmationPage({ params }: ConfirmationPageProps
           
           {/* Back link */}
           <Link
-            href={`/${hotelSlug}`}
+            href={
+              returnUrl
+                ? `/${hotelSlug}?returnUrl=${encodeURIComponent(returnUrl)}`
+                : `/${hotelSlug}`
+            }
             className="inline-flex items-center justify-center px-6 py-3.5 bg-accent text-accent-foreground font-medium rounded-button hover:bg-accent-hover transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
             Browse More Experiences

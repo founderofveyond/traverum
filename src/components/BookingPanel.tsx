@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Calendar, ChevronDown } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
 import { calculatePrice, getDisplayPrice } from '@/lib/pricing'
@@ -18,6 +18,8 @@ interface BookingPanelProps {
 
 export function BookingPanel({ experience, sessions, hotelSlug }: BookingPanelProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const returnUrl = searchParams.get('returnUrl')
   const [participants, setParticipants] = useState(experience.min_participants)
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null)
   const [isCustomRequest, setIsCustomRequest] = useState(false)
@@ -81,6 +83,7 @@ export function BookingPanel({ experience, sessions, hotelSlug }: BookingPanelPr
       params.set('experienceId', experience.id)
       params.set('participants', participants.toString())
       params.set('total', priceCalc.totalPrice.toString())
+      if (returnUrl) params.set('returnUrl', returnUrl)
       
       if (isCustomRequest) {
         params.set('requestDate', customDate)

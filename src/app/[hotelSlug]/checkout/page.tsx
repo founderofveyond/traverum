@@ -16,6 +16,7 @@ interface CheckoutPageProps {
   params: Promise<{ hotelSlug: string }>
   searchParams: Promise<{
     embed?: string
+    returnUrl?: string
     experienceId?: string
     sessionId?: string
     participants?: string
@@ -30,6 +31,7 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
   const { hotelSlug } = await params
   const search = await searchParams
   const embedMode = getEmbedMode(search)
+  const returnUrl = search.returnUrl
   
   // Validate required params
   const experienceId = search.experienceId
@@ -37,7 +39,11 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
   const totalStr = search.total
   
   if (!experienceId || !participantsStr || !totalStr) {
-    redirect(`/${hotelSlug}`)
+    redirect(
+      returnUrl
+        ? `/${hotelSlug}?returnUrl=${encodeURIComponent(returnUrl)}`
+        : `/${hotelSlug}`
+    )
   }
   
   const hotel = await getHotelBySlug(hotelSlug)
@@ -100,13 +106,19 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
           hotelName={hotel.display_name}
           logoUrl={hotel.logo_url}
           hotelSlug={hotelSlug}
+          showBack={Boolean(returnUrl)}
+          backTo={returnUrl}
         />
       )}
       
       <main className="container px-4 py-6">
         {/* Back link */}
         <Link
-          href={`/${hotelSlug}/${experience.slug}`}
+          href={
+            returnUrl
+              ? `/${hotelSlug}/${experience.slug}?returnUrl=${encodeURIComponent(returnUrl)}`
+              : `/${hotelSlug}/${experience.slug}`
+          }
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

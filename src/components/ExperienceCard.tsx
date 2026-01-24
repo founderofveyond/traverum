@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import type { ExperienceWithMedia } from '@/lib/hotels'
 
@@ -12,7 +13,15 @@ interface ExperienceCardProps {
 }
 
 export function ExperienceCard({ experience, hotelSlug, embedMode = 'full' }: ExperienceCardProps) {
-  const href = `/${hotelSlug}/${experience.slug}`
+  const searchParams = useSearchParams()
+  const returnUrl = searchParams.get('returnUrl')
+
+  const params = new URLSearchParams()
+  if (returnUrl) params.set('returnUrl', returnUrl)
+
+  const href = params.toString()
+    ? `/${hotelSlug}/${experience.slug}?${params.toString()}`
+    : `/${hotelSlug}/${experience.slug}`
   
   // In section mode, open in new tab
   const linkProps = embedMode === 'section' 

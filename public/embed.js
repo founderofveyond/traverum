@@ -6,7 +6,8 @@
  * <script src="https://book.traverum.com/embed.js" 
  *         data-hotel="hotel-traverum"
  *         data-mode="section"
- *         data-max-experiences="3">
+  *         data-max-experiences="3"
+  *         data-return-url="https://hotel.com/experiences">
  * </script>
  * 
  * The widget URL is automatically detected from the script src.
@@ -50,7 +51,9 @@
     maxExperiences: currentScript.getAttribute('data-max-experiences') || '3',
     theme: currentScript.getAttribute('data-theme') || 'light',
     containerId: currentScript.getAttribute('data-container') || CONTAINER_ID,
-    widgetUrl: currentScript.getAttribute('data-widget-url') || WIDGET_URL
+    widgetUrl: currentScript.getAttribute('data-widget-url') || WIDGET_URL,
+    // Where the "Back" button should return the user (defaults to current host page URL)
+    returnUrl: currentScript.getAttribute('data-return-url') || window.location.href
   };
   
   // Use data-widget-url if provided, otherwise use detected URL
@@ -73,6 +76,9 @@
   var iframeSrc = WIDGET_URL + '/' + config.hotel + '?embed=' + config.mode;
   if (config.maxExperiences) {
     iframeSrc += '&max=' + config.maxExperiences;
+  }
+  if (config.returnUrl) {
+    iframeSrc += '&returnUrl=' + encodeURIComponent(config.returnUrl);
   }
   // Add cache-buster to prevent stale iframe content
   iframeSrc += '&_t=' + Date.now();

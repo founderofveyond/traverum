@@ -90,7 +90,16 @@ export default async function HotelLayout({ children, params }: HotelLayoutProps
   
   // Calculate font sizes from base (default 16px)
   const basePx = parseInt(hotel.font_size_base || '16')
-  const titleSize = hotel.title_font_size || `${basePx * 2}px`
+  // Calculate responsive title size using clamp() for mobile responsiveness
+  const configuredTitleSize = hotel.title_font_size || `${basePx * 4}px`
+  const titleSizePx = parseInt(configuredTitleSize.replace('px', '')) || (basePx * 4)
+  // Use clamp: min 50% of size (mobile), preferred scales smoothly with viewport, max full size (desktop)
+  // Formula ensures smooth scaling from mobile (375px) to desktop (1920px+)
+  const minSize = Math.round(titleSizePx * 0.5)
+  // Calculate vw to scale from min at ~375px to max at ~1920px: (max - min) / (1920 - 375) * 100
+  const vwMultiplier = ((titleSizePx - minSize) / (1920 - 375)) * 100
+  const vwSize = Math.round(vwMultiplier * 10) / 10 // Round to 1 decimal for cleaner CSS
+  const titleSize = `clamp(${minSize}px, ${vwSize}vw, ${titleSizePx}px)`
   
   // Font families with defaults
   // Default: Poppins (current font) for headings, Inter for body text

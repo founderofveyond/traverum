@@ -10,12 +10,13 @@ export const dynamic = 'force-dynamic'
 
 interface ReservationPageProps {
   params: Promise<{ hotelSlug: string; id: string }>
-  searchParams: Promise<{ embed?: string }>
+  searchParams: Promise<{ embed?: string; returnUrl?: string }>
 }
 
 export default async function ReservationPage({ params, searchParams }: ReservationPageProps) {
   const { hotelSlug, id } = await params
   const search = await searchParams
+  const returnUrl = search.returnUrl
   
   const hotel = await getHotelBySlug(hotelSlug)
   if (!hotel) {
@@ -49,6 +50,8 @@ export default async function ReservationPage({ params, searchParams }: Reservat
         hotelName={hotel.display_name}
         logoUrl={hotel.logo_url}
         hotelSlug={hotelSlug}
+        showBack={Boolean(returnUrl)}
+        backTo={returnUrl}
       />
       
       <main className="container px-4 py-8">
@@ -150,7 +153,11 @@ export default async function ReservationPage({ params, searchParams }: Reservat
             {/* Back link */}
             <div className="mt-6">
               <Link
-                href={`/${hotelSlug}`}
+                href={
+                  returnUrl
+                    ? `/${hotelSlug}?returnUrl=${encodeURIComponent(returnUrl)}`
+                    : `/${hotelSlug}`
+                }
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

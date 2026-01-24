@@ -14,7 +14,7 @@ export const dynamic = 'force-dynamic'
 
 interface ExperiencePageProps {
   params: Promise<{ hotelSlug: string; experienceSlug: string }>
-  searchParams: Promise<{ embed?: string }>
+  searchParams: Promise<{ embed?: string; returnUrl?: string }>
 }
 
 export async function generateMetadata({ params }: ExperiencePageProps): Promise<Metadata> {
@@ -36,6 +36,7 @@ export default async function ExperiencePage({ params, searchParams }: Experienc
   const { hotelSlug, experienceSlug } = await params
   const search = await searchParams
   const embedMode = getEmbedMode(search)
+  const returnUrl = search.returnUrl
   
   const [hotel, experience] = await Promise.all([
     getHotelBySlug(hotelSlug),
@@ -59,8 +60,8 @@ export default async function ExperiencePage({ params, searchParams }: Experienc
           hotelName={hotel.display_name}
           logoUrl={hotel.logo_url}
           hotelSlug={hotelSlug}
-          showBack
-          backTo={`/${hotelSlug}`}
+          showBack={Boolean(returnUrl)}
+          backTo={returnUrl || `/${hotelSlug}`}
         />
       )}
       
