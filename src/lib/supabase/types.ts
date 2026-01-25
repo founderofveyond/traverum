@@ -199,6 +199,7 @@ export type Database = {
           price_cents: number
           pricing_type: string
           slug: string
+          tags: string[]
           title: string
           updated_at: string | null
         }
@@ -221,6 +222,7 @@ export type Database = {
           price_cents: number
           pricing_type?: string
           slug: string
+          tags?: string[]
           title: string
           updated_at?: string | null
         }
@@ -243,6 +245,7 @@ export type Database = {
           price_cents?: number
           pricing_type?: string
           slug?: string
+          tags?: string[]
           title?: string
           updated_at?: string | null
         }
