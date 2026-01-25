@@ -22,7 +22,7 @@ export function ExperienceListClient({ experiences, hotelSlug, embedMode }: Expe
       .flatMap(e => e.tags || [])
       .map(tag => tag.trim())
       .filter(tag => tag.length > 0)
-    return [...new Set(allTags)].sort()
+    return Array.from(new Set(allTags)).sort()
   }, [experiences])
 
   // Filter experiences based on active tag
