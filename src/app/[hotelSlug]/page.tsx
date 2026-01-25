@@ -50,8 +50,7 @@ export default async function HotelPage({ params, searchParams }: HotelPageProps
           hotelName={hotel.display_name}
           logoUrl={hotel.logo_url}
           hotelSlug={hotelSlug}
-          showBack={Boolean(returnUrl)}
-          backTo={returnUrl}
+          showBack={false}
         />
       )}
       
@@ -113,7 +112,7 @@ export default async function HotelPage({ params, searchParams }: HotelPageProps
             
             {/* View all link - section mode only */}
             {hasMoreExperiences && (
-              <div className="mt-6 text-center">
+              <div className="mt-8 mb-8 text-center">
                 <Link
                   href={
                     returnUrl

@@ -50,8 +50,8 @@ export default async function ReservationPage({ params, searchParams }: Reservat
         hotelName={hotel.display_name}
         logoUrl={hotel.logo_url}
         hotelSlug={hotelSlug}
-        showBack={Boolean(returnUrl)}
-        backTo={returnUrl}
+        showBack={true}
+        backTo={returnUrl ? `/${hotelSlug}?embed=full&returnUrl=${encodeURIComponent(returnUrl)}` : `/${hotelSlug}?embed=full`}
       />
       
       <main className="container px-4 py-8">

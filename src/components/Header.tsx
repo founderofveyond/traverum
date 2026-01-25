@@ -1,8 +1,8 @@
 'use client'
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
-import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 
 interface HeaderProps {
   hotelName: string
@@ -14,19 +14,12 @@ interface HeaderProps {
 
 export function Header({ hotelName, logoUrl, hotelSlug, showBack = false, backTo }: HeaderProps) {
   const router = useRouter()
-  const pathname = usePathname()
   const searchParams = useSearchParams()
 
   const returnUrl = searchParams.get('returnUrl')
   const homeHref = returnUrl
-    ? `/${hotelSlug}?returnUrl=${encodeURIComponent(returnUrl)}`
-    : `/${hotelSlug}`
-
-  const allExperiencesHref = returnUrl
     ? `/${hotelSlug}?embed=full&returnUrl=${encodeURIComponent(returnUrl)}`
     : `/${hotelSlug}?embed=full`
-
-  const isOnExperiencesPage = pathname === `/${hotelSlug}`
 
   const isSafeHttpUrl = (url: string) => {
     try {
@@ -37,8 +30,23 @@ export function Header({ hotelName, logoUrl, hotelSlug, showBack = false, backTo
     }
   }
 
+  const handleBackClick = () => {
+    // If backTo is provided, use it (for detail page -> full list)
+    if (backTo) {
+      if (isSafeHttpUrl(backTo)) {
+        window.location.assign(backTo)
+      } else {
+        router.push(backTo)
+      }
+      return
+    }
+
+    // Fallback: go to experiences list
+    router.push(homeHref)
+  }
+
   const handleHotelButtonClick = () => {
-    // When embedded, this should take the user back to the original hotel site.
+    // On full experiences page: return to hotel site (via returnUrl)
     const target =
       (returnUrl && isSafeHttpUrl(returnUrl) ? returnUrl : null) ||
       (backTo && isSafeHttpUrl(backTo) ? backTo : null)
@@ -54,43 +62,38 @@ export function Header({ hotelName, logoUrl, hotelSlug, showBack = false, backTo
 
   return (
     <header className="sticky top-0 z-40 bg-background border-b border-border">
-      <div className="container flex items-center justify-between h-14 px-4">
+      <div className="container flex items-center h-14 px-4">
         <div className="flex items-center gap-2 min-w-0">
-          <button
-            type="button"
-            onClick={handleHotelButtonClick}
-            className="inline-flex items-center gap-3 px-2 h-10 -ml-2 rounded-button hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent min-w-0"
-            aria-label={`Back to ${hotelName}`}
-          >
-            {logoUrl ? (
-              <Image
-                src={logoUrl}
-                alt={hotelName}
-                width={32}
-                height={32}
-                className="rounded-lg object-contain"
-              />
-            ) : null}
-            <h1 className="text-lg text-foreground truncate">{hotelName}</h1>
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {isOnExperiencesPage ? (
-            <span
-              className="inline-flex items-center h-10 px-3 rounded-button border border-border bg-muted text-sm font-medium text-foreground/70 cursor-default select-none"
-              aria-current="page"
+          {showBack ? (
+            // Detail page: Back button to full experiences list
+            <button
+              type="button"
+              onClick={handleBackClick}
+              className="inline-flex items-center gap-2 px-2 h-10 -ml-2 rounded-button hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              aria-label="Back to all experiences"
             >
-              All experiences
-            </span>
+              <ArrowLeft className="w-5 h-5 text-foreground" />
+              <span className="text-sm font-medium text-foreground">Back</span>
+            </button>
           ) : (
-            <Link
-              href={allExperiencesHref}
-              className="inline-flex items-center h-10 px-3 rounded-button border border-border bg-background hover:bg-muted transition-colors text-sm font-medium text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              aria-label="All experiences"
+            // Full experiences page: Hotel name button to hotel site
+            <button
+              type="button"
+              onClick={handleHotelButtonClick}
+              className="inline-flex items-center gap-3 px-2 h-10 -ml-2 rounded-button hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent min-w-0"
+              aria-label={`Back to ${hotelName}`}
             >
-              All experiences
-            </Link>
+              {logoUrl ? (
+                <Image
+                  src={logoUrl}
+                  alt={hotelName}
+                  width={32}
+                  height={32}
+                  className="rounded-lg object-contain"
+                />
+              ) : null}
+              <h1 className="text-lg font-heading text-foreground truncate">{hotelName}</h1>
+            </button>
           )}
         </div>
       </div>

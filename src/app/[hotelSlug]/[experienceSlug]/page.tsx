@@ -60,8 +60,8 @@ export default async function ExperiencePage({ params, searchParams }: Experienc
           hotelName={hotel.display_name}
           logoUrl={hotel.logo_url}
           hotelSlug={hotelSlug}
-          showBack={Boolean(returnUrl)}
-          backTo={returnUrl || `/${hotelSlug}`}
+          showBack={true}
+          backTo={returnUrl ? `/${hotelSlug}?embed=full&returnUrl=${encodeURIComponent(returnUrl)}` : `/${hotelSlug}?embed=full`}
         />
       )}
       
